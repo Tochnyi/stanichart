@@ -1,0 +1,9 @@
+{
+  "skills": {
+    "tochnyi-chart": {
+      "path": ".claude/skills/tochnyi-chart.md",
+      "description": "Generate a Tochnyi-styled chart from text. Give me text with data/statistics and I'll create an interactive HTML chart.",
+      "trigger": "/chart"
+    }
+  }
+}

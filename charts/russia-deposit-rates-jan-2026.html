@@ -1,0 +1,113 @@
+<!--
+Original text:
+The average maximum interest rate on ruble deposits for the second 10 days of January 2026
+in Russia in the 10 largest banks dropped to 14,88% down from 15,28% in the last 10 days
+of December 2025 and 15,1% in the first 10 days of January 2026.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russia Deposit Interest Rates Jan 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../lib/tochnyi.css">
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="../lib/tochnyi-charts.js"></script>
+</head>
+<body>
+    <div class="tochnyi-chart">
+        <div class="tochnyi-header">
+            <img src="../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
+            <div class="tochnyi-date">Date: 2026-01-26</div>
+        </div>
+
+        <h1 class="tochnyi-title">Russian Deposit Rates Declining</h1>
+        <p class="tochnyi-subtitle">Average max rate at top 10 banks fell to <span class="tochnyi-highlight">14.88%</span> in mid-January 2026</p>
+
+        <div id="chartdiv" class="tochnyi-chart-container">
+            <img src="../lib/watermark.svg" class="tochnyi-watermark" alt="">
+            <div class="tochnyi-change-badge down corner">▼ 0.4pp</div>
+        </div>
+
+        <div class="tochnyi-source">Source: Russian Central Bank data on top 10 banks</div>
+
+        <div class="tochnyi-footer">
+            <span>Analysis by:</span>
+            <a href="https://x.com/delfoo">@delfoo</a>
+            <a href="https://bsky.app/profile/delfoo.bsky.social">@delfoo.bsky.social</a>
+        </div>
+    </div>
+
+    <script>
+        am5.ready(function() {
+            var root = Tochnyi.createRoot("chartdiv");
+            var chart = root.container.children.push(am5xy.XYChart.new(root, {
+                panX: false,
+                panY: false,
+                wheelX: "none",
+                wheelY: "none",
+                paddingLeft: 10,
+                paddingRight: 10,
+                layout: root.verticalLayout
+            }));
+
+            var data = [
+                { period: "Late Dec 2025", rate: 15.28 },
+                { period: "Early Jan 2026", rate: 15.1 },
+                { period: "Mid Jan 2026", rate: 14.88 }
+            ];
+
+            var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+                categoryField: "period",
+                renderer: Tochnyi.createXRenderer(root, { minGridDistance: 50 })
+            }));
+            xAxis.data.setAll(data);
+
+            var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+                min: 14,
+                max: 16,
+                numberFormat: "#.##'%'",
+                renderer: Tochnyi.createYRenderer(root)
+            }));
+            Tochnyi.addYAxisLabel(root, yAxis, "INTEREST RATE");
+
+            var series = Tochnyi.createLineSeries(root, chart, {
+                name: "Deposit Rate",
+                xAxis: xAxis,
+                yAxis: yAxis,
+                valueField: "rate",
+                categoryField: "period",
+                color: Tochnyi.colors.blue,
+                strokeWidth: 4,
+                bulletRadius: 8
+            });
+
+            // Add value labels above points
+            series.bullets.push(function() {
+                return am5.Bullet.new(root, {
+                    locationY: 1,
+                    sprite: am5.Label.new(root, {
+                        text: "{valueY}%",
+                        fill: am5.color(Tochnyi.colors.blue),
+                        centerY: am5.percent(100),
+                        centerX: am5.percent(50),
+                        fontSize: Tochnyi.font.sizes.large,
+                        fontWeight: Tochnyi.font.weights.bold,
+                        fontFamily: Tochnyi.font.family,
+                        dy: -15,
+                        populateText: true
+                    })
+                });
+            });
+
+            series.data.setAll(data);
+            series.appear(1000);
+
+            chart.appear(1000, 100);
+        });
+    </script>
+</body>
+</html>

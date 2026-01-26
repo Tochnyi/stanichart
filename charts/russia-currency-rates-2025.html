@@ -1,0 +1,110 @@
+<!--
+Original text:
+The Russian Central Bank raised the USD exchange rate by 0,09 rubles from 75,92 rubles to
+76,01 rubles per USD and the euro exchange rate by 1,23 rubles from 89,06 rubles to 90,29
+rubles per euro.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russia Currency Exchange Rates 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../lib/tochnyi.css">
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="../lib/tochnyi-charts.js"></script>
+</head>
+<body>
+    <div class="tochnyi-chart">
+        <div class="tochnyi-header">
+            <img src="../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
+            <div class="tochnyi-date">Date: 2026-01-26</div>
+        </div>
+
+        <h1 class="tochnyi-title">Russian Central Bank Raises Exchange Rates</h1>
+        <p class="tochnyi-subtitle">USD up <span class="tochnyi-highlight">+0.09₽</span>, Euro up <span class="tochnyi-highlight">+1.23₽</span></p>
+
+        <div id="chartdiv" class="tochnyi-chart-container">
+            <img src="../lib/watermark.svg" class="tochnyi-watermark" alt="">
+        </div>
+
+        <div class="tochnyi-source">Source: Russian Central Bank</div>
+
+        <div class="tochnyi-footer">
+            <span>Analysis by:</span>
+            <a href="https://x.com/delfoo">@delfoo</a>
+            <a href="https://bsky.app/profile/delfoo.bsky.social">@delfoo.bsky.social</a>
+        </div>
+    </div>
+
+    <script>
+        am5.ready(function() {
+            var root = Tochnyi.createRoot("chartdiv");
+            var chart = root.container.children.push(am5xy.XYChart.new(root, {
+                panX: false,
+                panY: false,
+                wheelX: "none",
+                wheelY: "none",
+                paddingLeft: 10,
+                paddingRight: 10,
+                layout: root.verticalLayout
+            }));
+
+            var data = [
+                { category: "USD", before: 75.92, after: 76.01 },
+                { category: "EUR", before: 89.06, after: 90.29 }
+            ];
+
+            var xRenderer = Tochnyi.createXRenderer(root, {
+                cellStartLocation: 0.1,
+                cellEndLocation: 0.9
+            });
+            var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+                categoryField: "category",
+                renderer: xRenderer
+            }));
+            xAxis.data.setAll(data);
+
+            var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+                min: 70,
+                max: 95,
+                renderer: Tochnyi.createYRenderer(root)
+            }));
+            Tochnyi.addYAxisLabel(root, yAxis, "RUBLES");
+
+            // Before rate (blue)
+            var series1 = Tochnyi.createColumnSeries(root, chart, {
+                name: "Before",
+                xAxis: xAxis,
+                yAxis: yAxis,
+                valueField: "before",
+                categoryField: "category",
+                color: Tochnyi.colors.blue,
+                labelFormat: "{valueY}"
+            });
+            series1.data.setAll(data);
+
+            // After rate (yellow)
+            var series2 = Tochnyi.createColumnSeries(root, chart, {
+                name: "After",
+                xAxis: xAxis,
+                yAxis: yAxis,
+                valueField: "after",
+                categoryField: "category",
+                color: Tochnyi.colors.yellow,
+                labelFormat: "{valueY}",
+                labelColor: Tochnyi.colors.black
+            });
+            series2.data.setAll(data);
+
+            var legend = Tochnyi.createLegend(root, chart);
+            legend.data.setAll(chart.series.values);
+
+            chart.appear(1000, 100);
+        });
+    </script>
+</body>
+</html>

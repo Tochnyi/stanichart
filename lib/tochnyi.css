@@ -1,0 +1,238 @@
+/**
+ * Tochnyi Chart Styles
+ * Ukrainian-themed data visualization styling
+ */
+
+/* ===== CSS Variables ===== */
+:root {
+    /* Primary colors (Ukrainian flag) */
+    --tochnyi-blue: #005bbb;
+    --tochnyi-yellow: #ffd500;
+
+    /* Secondary colors */
+    --tochnyi-blue-dark: #003d7a;
+    --tochnyi-blue-light: #245eab;
+    --tochnyi-yellow-dark: #fdd400;
+    --tochnyi-yellow-light: #ffeb3b;
+
+    /* Neutrals */
+    --tochnyi-black: #020303;
+    --tochnyi-gray: #666666;
+    --tochnyi-gray-light: gray;
+    --tochnyi-white: #ffffff;
+
+    /* Grid */
+    --tochnyi-grid-opacity: 0.3;
+
+    /* Typography */
+    --tochnyi-font: 'Mukta', sans-serif;
+
+    /* Spacing */
+    --tochnyi-padding: 40px;
+    --tochnyi-max-width: 1200px;
+}
+
+/* ===== Reset ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== Base ===== */
+body {
+    font-family: var(--tochnyi-font);
+    background-color: var(--tochnyi-white);
+    min-height: 100vh;
+    padding: var(--tochnyi-padding);
+    color: var(--tochnyi-black);
+}
+
+/* ===== Chart Wrapper ===== */
+.tochnyi-chart {
+    max-width: var(--tochnyi-max-width);
+    margin: 0 auto;
+}
+
+/* ===== Header ===== */
+.tochnyi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.tochnyi-logo {
+    height: 40px;
+    width: auto;
+}
+
+.tochnyi-date {
+    color: var(--tochnyi-gray-light);
+    font-size: 20px;
+}
+
+/* ===== Title ===== */
+.tochnyi-title {
+    text-align: center;
+    color: var(--tochnyi-black);
+    font-size: 42px;
+    font-weight: 400;
+    margin-bottom: 10px;
+}
+
+.tochnyi-subtitle {
+    text-align: center;
+    color: var(--tochnyi-gray);
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.tochnyi-highlight {
+    color: var(--tochnyi-blue);
+    font-weight: 600;
+}
+
+/* ===== Chart Container ===== */
+.tochnyi-chart-container {
+    width: 100%;
+    height: 550px;
+    position: relative;
+}
+
+.tochnyi-chart-container.short {
+    height: 400px;
+}
+
+.tochnyi-chart-container.tall {
+    height: 700px;
+}
+
+/* ===== Watermark ===== */
+.tochnyi-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 80%;
+    width: auto;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.tochnyi-watermark.small {
+    top: 20px;
+    right: 20px;
+    left: auto;
+    transform: none;
+    height: 80px;
+}
+
+.tochnyi-watermark.corner {
+    top: 20px;
+    right: 20px;
+    left: auto;
+    transform: none;
+    height: 100px;
+}
+
+/* ===== Source ===== */
+.tochnyi-source {
+    margin-top: 15px;
+    font-size: 14px;
+    color: var(--tochnyi-gray-light);
+}
+
+/* ===== Footer ===== */
+.tochnyi-footer {
+    margin-top: 30px;
+    display: flex;
+    gap: 20px;
+    font-size: 16px;
+    color: var(--tochnyi-black);
+}
+
+.tochnyi-footer a {
+    color: var(--tochnyi-blue);
+    text-decoration: none;
+}
+
+.tochnyi-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Change Badge ===== */
+.tochnyi-change-badge {
+    position: absolute;
+    top: 50%;
+    right: 380px;
+    transform: translateY(-50%);
+    font-family: var(--tochnyi-font);
+    font-size: 32px;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tochnyi-change-badge.down {
+    color: #cc0000;
+    background: rgba(255, 255, 255, 0.9);
+    border: 3px solid #cc0000;
+}
+
+.tochnyi-change-badge.up {
+    color: #00aa00;
+    background: rgba(255, 255, 255, 0.9);
+    border: 3px solid #00aa00;
+}
+
+/* Corner position - for line charts or when default position interferes */
+.tochnyi-change-badge.corner {
+    top: 20px;
+    right: 20px;
+    transform: none;
+}
+
+/* ===== Big Number (for pie/donut charts) ===== */
+.tochnyi-big-number {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    text-align: left;
+    z-index: 100;
+}
+
+.tochnyi-big-number .number {
+    font-family: var(--tochnyi-font);
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--tochnyi-blue);
+    line-height: 1;
+}
+
+.tochnyi-big-number .label {
+    font-family: var(--tochnyi-font);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--tochnyi-gray);
+    text-transform: uppercase;
+}
+
+/* ===== Utility Classes ===== */
+.text-blue { color: var(--tochnyi-blue); }
+.text-yellow { color: var(--tochnyi-yellow); }
+.text-gray { color: var(--tochnyi-gray); }
+.text-center { text-align: center; }
+.text-bold { font-weight: 700; }
+.text-semibold { font-weight: 600; }
+.text-medium { font-weight: 500; }
+
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+.mt-30 { margin-top: 30px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-30 { margin-bottom: 30px; }

@@ -1,0 +1,90 @@
+<!--
+Original text:
+In 2025 in Russia the retail sales of alcohol excluding beer, cider, mead fell by 9.3%
+year-over-year to 205.8 million decaliters.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russia Alcohol Sales 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../lib/tochnyi.css">
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="../lib/tochnyi-charts.js"></script>
+</head>
+<body>
+    <div class="tochnyi-chart">
+        <div class="tochnyi-header">
+            <img src="../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
+            <div class="tochnyi-date">Date: 2025-01-26</div>
+        </div>
+
+        <h1 class="tochnyi-title">Russian Alcohol Sales Drop in 2025</h1>
+        <p class="tochnyi-subtitle">Retail sales of spirits fell <span class="tochnyi-highlight">▼ 9.3%</span> year-over-year (excl. beer, cider, mead)</p>
+
+        <div id="chartdiv" class="tochnyi-chart-container">
+            <img src="../lib/watermark.svg" class="tochnyi-watermark" alt="">
+            <div class="tochnyi-change-badge down">▼ 9.3%</div>
+        </div>
+
+        <div class="tochnyi-source">Source: Russian retail sales data</div>
+
+        <div class="tochnyi-footer">
+            <span>Analysis by:</span>
+            <a href="https://x.com/delfoo">@delfoo</a>
+            <a href="https://bsky.app/profile/delfoo.bsky.social">@delfoo.bsky.social</a>
+        </div>
+    </div>
+
+    <script>
+        am5.ready(function() {
+            var root = Tochnyi.createRoot("chartdiv");
+            var chart = root.container.children.push(am5xy.XYChart.new(root, {
+                panX: false,
+                panY: false,
+                wheelX: "none",
+                wheelY: "none",
+                paddingLeft: 10,
+                paddingRight: 10,
+                layout: root.verticalLayout
+            }));
+
+            // 2025: 205.8M dal, 2024: 205.8 / (1 - 0.093) = ~226.9M dal
+            var data = [
+                { category: "2024", value: 226.9 },
+                { category: "2025", value: 205.8 }
+            ];
+
+            var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+                categoryField: "category",
+                renderer: Tochnyi.createXRenderer(root)
+            }));
+            xAxis.data.setAll(data);
+
+            var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+                min: 0,
+                max: 250,
+                renderer: Tochnyi.createYRenderer(root)
+            }));
+            Tochnyi.addYAxisLabel(root, yAxis, "MILLION DECALITERS");
+
+            var series = Tochnyi.createColumnSeries(root, chart, {
+                name: "Alcohol Sales",
+                xAxis: xAxis,
+                yAxis: yAxis,
+                valueField: "value",
+                categoryField: "category",
+                labelFormat: "{valueY}"
+            });
+            Tochnyi.applyBarColors(series);
+            series.data.setAll(data);
+
+            chart.appear(1000, 100);
+        });
+    </script>
+</body>
+</html>
