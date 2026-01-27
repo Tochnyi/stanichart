@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russia's Residential Mortgage Lending Doubled in December 2025</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700"
+          rel="stylesheet">
+    <link rel="stylesheet" href="../../lib/tochnyi.css">
+
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="../../lib/tochnyi-charts.js"></script>
+</head>
+
+<body>
+    <div class="tochnyi-chart">
+
+        <div class="tochnyi-header">
+            <img src="../../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
+            <div class="tochnyi-date">Date: January 27, 2026</div>
+        </div>
+
+        <h1 class="tochnyi-title">
+            Russia's Residential Mortgage Lending Doubled
+        </h1>
+
+        <p class="tochnyi-subtitle">
+            December 2025 vs December 2024: Both contract volume and monetary value saw 100%+ year-over-year growth
+        </p>
+
+        <div id="chartdiv" class="tochnyi-chart-container">
+            <img src="../../lib/watermark.svg" class="tochnyi-watermark" alt="">
+            <div class="tochnyi-change-badge up corner">▲ 100%</div>
+        </div>
+
+        <div class="tochnyi-source">
+            Source: DOM.RF (Housing Development Institute)
+        </div>
+
+        <div class="tochnyi-footer">
+            <span>Analysis by:</span>
+            <a href="https://x.com/delfoo">@delfoo</a>
+            <a href="https://bsky.app/profile/delfoo.bsky.social">
+                @delfoo.bsky.social
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        am5.ready(function() {
+            var root = Tochnyi.createRoot("chartdiv");
+            var chart = root.container.children.push(am5xy.XYChart.new(root, {
+                panX: false, panY: false, wheelX: "none", wheelY: "none",
+                paddingLeft: 10, paddingRight: 10, layout: root.verticalLayout
+            }));
+
+            var data = [
+                {
+                    period: "December 2024",
+                    contracts: 8500,
+                    value: 45.5
+                },
+                {
+                    period: "December 2025",
+                    contracts: 17000,
+                    value: 91
+                }
+            ];
+
+            // X-Axis
+            var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+                categoryField: "period",
+                renderer: Tochnyi.createXRenderer(root)
+            }));
+            xAxis.data.setAll(data);
+
+            // Y-Axis for Contracts (left)
+            var yAxis1 = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+                min: 0,
+                max: 20000,
+                numberFormat: "#,###",
+                renderer: Tochnyi.createYRenderer(root)
+            }));
+            yAxis1.children.moveValue(am5.Label.new(root, {
+                text: "Number of Contracts",
+                rotation: -90,
+                y: am5.p50,
+                centerX: am5.p50,
+                fill: am5.color(0x999999),
+                fontSize: 13
+            }), 0);
+
+            // Y-Axis for Value (right)
+            var yAxis2 = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+                min: 0,
+                max: 100,
+                numberFormat: "#,### bn ₽",
+                renderer: am5xy.AxisRendererY.new(root, {
+                    opposite: true,
+                    minGridDistance: 30
+                })
+            }));
+            yAxis2.get("renderer").labels.template.setAll({
+                fill: am5.color(0x999999),
+                fontSize: 13,
+                fontFamily: "Mukta, sans-serif"
+            });
+            yAxis2.get("renderer").grid.template.setAll({
+                stroke: am5.color(0xe0e0e0),
+                strokeWidth: 1,
+                strokeDasharray: [3, 3]
+            });
+            yAxis2.children.moveValue(am5.Label.new(root, {
+                text: "Value (billion rubles)",
+                rotation: 90,
+                y: am5.p50,
+                centerX: am5.p50,
+                fill: am5.color(0x999999),
+                fontSize: 13
+            }), 0);
+
+            // Series 1: Number of Contracts
+            var series1 = Tochnyi.createColumnSeries(root, chart, {
+                name: "Contracts",
+                xAxis: xAxis,
+                yAxis: yAxis1,
+                valueField: "contracts",
+                categoryField: "period",
+                labelFormat: "{valueY}"
+            });
+            series1.columns.template.setAll({
+                fill: am5.color(0x4285F4),
+                stroke: am5.color(0x4285F4)
+            });
+            series1.data.setAll(data);
+
+            // Series 2: Monetary Value
+            var series2 = Tochnyi.createColumnSeries(root, chart, {
+                name: "Value",
+                xAxis: xAxis,
+                yAxis: yAxis2,
+                valueField: "value",
+                categoryField: "period",
+                labelFormat: "{valueY} bn ₽"
+            });
+            series2.columns.template.setAll({
+                fill: am5.color(0xF4B400),
+                stroke: am5.color(0xF4B400)
+            });
+            series2.data.setAll(data);
+
+            // Legend
+            var legend = chart.children.push(am5.Legend.new(root, {
+                centerX: am5.p50,
+                x: am5.p50,
+                layout: root.horizontalLayout
+            }));
+            legend.labels.template.setAll({
+                fill: am5.color(0x666666),
+                fontSize: 13,
+                fontFamily: "Mukta, sans-serif"
+            });
+            legend.data.setAll([series1, series2]);
+
+            chart.appear(1000, 100);
+        });
+    </script>
+</body>
+</html>

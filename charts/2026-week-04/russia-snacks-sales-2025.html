@@ -1,48 +1,60 @@
-<!--
-Original text:
-The Russian Central Bank raised the USD exchange rate by 0,09 rubles from 75,92 rubles to
-76,01 rubles per USD and the euro exchange rate by 1,23 rubles from 89,06 rubles to 90,29
-rubles per euro.
--->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Russia Currency Exchange Rates 2025</title>
-    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../lib/tochnyi.css">
+    <title>Russia Snack Sales: Volume Down, Prices Up</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700"
+          rel="stylesheet">
+    <link rel="stylesheet" href="../../lib/tochnyi.css">
+
     <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
-    <script src="../lib/tochnyi-charts.js"></script>
+    <script src="../../lib/tochnyi-charts.js"></script>
 </head>
+
 <body>
     <div class="tochnyi-chart">
+
         <div class="tochnyi-header">
-            <img src="../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
-            <div class="tochnyi-date">Date: 2026-01-26</div>
+            <img src="../../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
+            <div class="tochnyi-date">Date: January 27, 2026</div>
         </div>
 
-        <h1 class="tochnyi-title">Russian Central Bank Raises Exchange Rates</h1>
-        <p class="tochnyi-subtitle">USD up <span class="tochnyi-highlight">+0.09₽</span>, Euro up <span class="tochnyi-highlight">+1.23₽</span></p>
+        <h1 class="tochnyi-title">
+            Russia Snack Sales: Volume Down, Prices Up
+        </h1>
+
+        <p class="tochnyi-subtitle">
+            Year-over-year change in retail sales, Dec 2024 to Nov 2025
+        </p>
 
         <div id="chartdiv" class="tochnyi-chart-container">
-            <img src="../lib/watermark.svg" class="tochnyi-watermark" alt="">
+            <img src="../../lib/watermark.svg" class="tochnyi-watermark" alt="">
         </div>
 
-        <div class="tochnyi-source">Source: Russian Central Bank</div>
+        <div class="tochnyi-source">
+            Source: NielsenIQ
+        </div>
 
         <div class="tochnyi-footer">
             <span>Analysis by:</span>
             <a href="https://x.com/delfoo">@delfoo</a>
-            <a href="https://bsky.app/profile/delfoo.bsky.social">@delfoo.bsky.social</a>
+            <a href="https://bsky.app/profile/delfoo.bsky.social">
+                @delfoo.bsky.social
+            </a>
         </div>
+
     </div>
 
     <script>
         am5.ready(function() {
             var root = Tochnyi.createRoot("chartdiv");
+
             var chart = root.container.children.push(am5xy.XYChart.new(root, {
                 panX: false,
                 panY: false,
@@ -54,8 +66,8 @@ rubles per euro.
             }));
 
             var data = [
-                { category: "USD", before: 75.92, after: 76.01 },
-                { category: "EUR", before: 89.06, after: 90.29 }
+                { category: "Dried fish snacks", volume: -7, monetary: 9 },
+                { category: "Chips", volume: -3, monetary: 10.8 }
             ];
 
             var xRenderer = Tochnyi.createXRenderer(root, {
@@ -69,42 +81,44 @@ rubles per euro.
             xAxis.data.setAll(data);
 
             var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-                min: 70,
-                max: 95,
+                min: -10,
+                max: 15,
+                numberFormat: "#'%'",
                 renderer: Tochnyi.createYRenderer(root)
             }));
-            Tochnyi.addYAxisLabel(root, yAxis, "RUBLES");
 
-            // Before rate (blue)
+            // Create series for volume change (negative)
             var series1 = Tochnyi.createColumnSeries(root, chart, {
-                name: "Before",
+                name: "Volume change",
                 xAxis: xAxis,
                 yAxis: yAxis,
-                valueField: "before",
+                valueField: "volume",
                 categoryField: "category",
                 color: Tochnyi.colors.blue,
-                labelFormat: "{valueY}"
+                labelFormat: "{valueY}%"
             });
             series1.data.setAll(data);
 
-            // After rate (yellow)
+            // Create series for monetary change (positive)
             var series2 = Tochnyi.createColumnSeries(root, chart, {
-                name: "After",
+                name: "Monetary change (rubles)",
                 xAxis: xAxis,
                 yAxis: yAxis,
-                valueField: "after",
+                valueField: "monetary",
                 categoryField: "category",
                 color: Tochnyi.colors.yellow,
-                labelFormat: "{valueY}",
+                labelFormat: "{valueY}%",
                 labelColor: Tochnyi.colors.black
             });
             series2.data.setAll(data);
 
+            // Add legend
             var legend = Tochnyi.createLegend(root, chart);
             legend.data.setAll(chart.series.values);
 
             chart.appear(1000, 100);
         });
     </script>
+
 </body>
 </html>

@@ -1,23 +1,55 @@
+---
+name: chart
+description: Generate interactive data visualization charts in Tochnyi style from text containing data or statistics
+version: 1.0.0
+triggers:
+  - pattern: "chart"
+  - pattern: "visualize"
+  - pattern: "graph"
+---
+
 # Tochnyi Chart Generator
 
 When the user provides text containing data or statistics, analyze it and generate an interactive chart in Tochnyi style.
 
+## Single Source of Truth
+
+**IMPORTANT**: `reference.html` is the single source of truth for all chart templates, code examples, and styling patterns.
+
+- **Before generating any chart**, read `reference.html` to see the latest working examples
+- Extract the HTML template structure from the "HTML Template" section in `reference.html`
+- Use the JavaScript code patterns from the chart demo sections (bar, grouped-bar, line, pie)
+- All updates to charts should be made to `reference.html` first, then this skill will automatically use them
+
 ## Files Structure
 
 The chart library consists of:
-- `lib/tochnyi.css` - Shared CSS styles and variables
-- `lib/tochnyi-charts.js` - JavaScript helper functions for AMCharts
-- `reference.html` - Reference page with all chart types and code examples
-- `charts/` - Output directory for generated charts
+- `reference.html` - **MASTER REFERENCE** with all chart types, HTML template, and working code examples
+- `lib/tochnyi.css` - Shared CSS styles and variables (referenced by all charts)
+- `lib/tochnyi-charts.js` - JavaScript helper functions for AMCharts (referenced by all charts)
+- `charts/` - Output directory for generated charts organized by week
 
 ## Workflow
 
-1. **Analyze the text** - Extract:
+1. **Read reference.html** - Always read `reference.html` first to get the latest template and code patterns
+
+2. **Analyze the text** - Extract:
    - Numbers/percentages/values
    - Categories or time periods
    - Relationships (comparisons, changes over time, distributions)
+   - **Calculate missing data points** - If you have a value and a percentage change, calculate the previous/next value to create a comparison chart:
+     - "Sales fell 30% to 326K" → Calculate: 326K ÷ (1 - 0.30) = 466K previous value → Create 2-bar chart
+     - "Revenue grew 15% to $5M" → Calculate: 5M ÷ (1 + 0.15) = $4.35M previous value → Create 2-bar chart
+     - This creates more compelling visualizations than single data points
+   - **Years/dates** - If the text doesn't specify the year(s) for the data, you MUST ask the user before proceeding. Never assume or guess the year. Examples:
+     - "Sales grew 15% compared to May" → Ask: "What year is this data from?"
+     - "Q4 revenue was $5M" → Ask: "Which year's Q4?"
+     - Only proceed if year is explicitly stated in the text or provided by the user
+   - **Data source** - If the text doesn't mention the source, you MUST ask the user before proceeding. Never use placeholders like "User provided" or "User provided data". Examples:
+     - No source mentioned → Ask: "What is the source for this data?"
+     - Only proceed if source is explicitly stated or provided by the user
 
-2. **Choose the best chart type** based on the data:
+3. **Choose the best chart type** based on the data:
    - **Bar/Column**: Single series categorical comparison, or year-over-year with 2 data points (use years as x-axis categories)
    - **Grouped Bar**: Comparing 3+ categories across 2+ series (e.g., multiple metrics across multiple years)
    - **Stacked Bar**: Parts of a whole across categories
@@ -39,7 +71,21 @@ The chart library consists of:
 
    Example: `<div class="tochnyi-change-badge down corner">▼ 0.4pp</div>`
 
-3. **Be creative** - Don't make boring charts! Think about what makes the data interesting:
+   **Big Number** (for pie/donut charts): Instead of using `addDonutCenterLabel()` JS function, use HTML:
+   ```html
+   <div id="chartdiv" class="tochnyi-chart-container">
+       <div class="tochnyi-big-number">
+           <div class="number">568K</div>
+           <div class="label">total</div>
+       </div>
+   </div>
+   ```
+
+   **Watermark Sizing**:
+   - **Pie/Donut charts**: Use `class="tochnyi-watermark small"` (160px, top-right corner)
+   - **All other charts** (bar, line, grouped bar): Use `class="tochnyi-watermark"` (large, centered, 80% height)
+
+4. **Be creative** - Don't make boring charts! Think about what makes the data interesting:
    - What's the story? A rejection, a dramatic change, a surprising comparison?
    - Add custom visual elements when appropriate (stamps, badges, annotations)
    - Use the subtitle and title to frame the narrative
@@ -47,259 +93,59 @@ The chart library consists of:
    - The goal is to make charts that people want to share, not just display data
    - **Avoid abbreviations** - Use descriptive names instead (e.g., "Russia's Largest Telecom" not "MTS", "Federal Antimonopoly Service" not "FAS"). International audiences won't know local acronyms.
 
-4. **Explain your choice** - Tell the user why this chart type best visualizes their data
+5. **Explain your choice** - Tell the user why this chart type best visualizes their data
 
-5. **Generate the HTML file** at `charts/[descriptive-name].html`
+6. **Determine the week** - Before generating the file:
+   - Run `powershell Get-Date -UFormat "%Y-week-%V"` to get current week (e.g., "2026-week-4")
+   - Zero-pad to 2 digits: `2026-week-04` (for proper sorting)
+   - Use this for the folder structure: `charts/2026-week-04/chart-name.html`
+   - This organizes charts by publication week for easy packaging later
 
-## Tochnyi Style Guide
+7. **Generate the HTML file** at `charts/[YYYY-week-WW]/[descriptive-name].html` (WW must be zero-padded)
+   - Use the HTML template from `reference.html`
+   - Adapt the JavaScript code from the relevant chart demo in `reference.html`
+   - Ensure relative paths are correct for the week subfolder (use `../../lib/` instead of `lib/` or `../lib/`)
 
-### Colors (defined in CSS variables and JS)
-```css
---tochnyi-blue: #005bbb;
---tochnyi-yellow: #ffd500;
---tochnyi-blue-light: #245eab;
---tochnyi-yellow-dark: #fdd400;
---tochnyi-blue-dark: #003d7a;
---tochnyi-black: #020303;
---tochnyi-gray: #666666;
-```
+## Getting Code Examples
 
-### JavaScript Color Access
-```javascript
-Tochnyi.colors.blue      // 0x005bbb
-Tochnyi.colors.yellow    // 0xffd500
-Tochnyi.palette          // Array of all colors for series
-```
+All code examples, templates, and patterns are in `reference.html`. When generating a chart:
 
-### Typography
-- Font: Mukta (Google Fonts)
-- Title: 42px, weight 400
-- Subtitle: 22px, weight 500
-- Axis labels: 18-20px, weight 500
-- Axis titles: 16px, weight 600, UPPERCASE
-- Value labels on bars: 28px, weight 700, white (or black on yellow bars)
-- Footer: 16px
+1. **Read `reference.html`** to get the latest patterns
+2. **Extract the HTML template** from the "HTML Template" section (around line 409-474)
+3. **Find the matching chart demo** (bar, grouped-bar, line, or pie) and adapt the JavaScript code
+4. **Check the CSS** for any special classes or patterns (change badges, big numbers, watermarks)
 
-### Label Colors
-- Blue bars: white text (default)
-- Yellow bars: black text (use `labelColor: Tochnyi.colors.black`)
-- When using `Tochnyi.applyBarColors(series)`, label colors are automatically adjusted
+Key sections in `reference.html`:
+- **Lines 409-474**: HTML template structure (copy this for all new charts)
+- **Lines 487-519**: Bar chart demo code
+- **Lines 522-563**: Grouped bar chart demo code
+- **Lines 566-601**: Line chart demo code
+- **Lines 604-629**: Pie/donut chart demo code
 
-## HTML Template
-
-```html
-<!--
-Original text:
-[PASTE THE ORIGINAL SOURCE TEXT HERE]
--->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[CHART TITLE]</title>
-    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../lib/tochnyi.css">
-    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
-    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
-    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
-    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
-    <script src="../lib/tochnyi-charts.js"></script>
-</head>
-<body>
-    <div class="tochnyi-chart">
-        <div class="tochnyi-header">
-            <img src="../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
-            <div class="tochnyi-date">Date: [TODAY'S DATE]</div>
-        </div>
-
-        <h1 class="tochnyi-title">[TITLE]</h1>
-        <p class="tochnyi-subtitle">[SUBTITLE with <span class="tochnyi-highlight">highlights</span>]</p>
-
-        <div id="chartdiv" class="tochnyi-chart-container">
-            <img src="../lib/watermark.svg" class="tochnyi-watermark" alt="">
-        </div>
-
-        <div class="tochnyi-source">Source: [SOURCE]</div>
-
-        <div class="tochnyi-footer">
-            <span>Analysis by:</span>
-            <a href="https://x.com/delfoo">@delfoo</a>
-            <a href="https://bsky.app/profile/delfoo.bsky.social">@delfoo.bsky.social</a>
-        </div>
-    </div>
-
-    <script>
-        am5.ready(function() {
-            // Chart code using Tochnyi helpers
-        });
-    </script>
-</body>
-</html>
-```
-
-## AMCharts Code Using Tochnyi Helpers
-
-### Bar Chart
-```javascript
-am5.ready(function() {
-    var root = Tochnyi.createRoot("chartdiv");
-    var chart = root.container.children.push(am5xy.XYChart.new(root, {
-        panX: false, panY: false, wheelX: "none", wheelY: "none",
-        paddingLeft: 10, paddingRight: 10, layout: root.verticalLayout
-    }));
-
-    var data = [
-        { category: "Category A", value: 85 },
-        { category: "Category B", value: 65 }
-    ];
-
-    var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-        categoryField: "category",
-        renderer: Tochnyi.createXRenderer(root)
-    }));
-    xAxis.data.setAll(data);
-
-    var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-        min: 0, numberFormat: "#'%'",
-        renderer: Tochnyi.createYRenderer(root)
-    }));
-    Tochnyi.addYAxisLabel(root, yAxis, "Y-AXIS TITLE");
-
-    var series = Tochnyi.createColumnSeries(root, chart, {
-        name: "Value", xAxis: xAxis, yAxis: yAxis,
-        valueField: "value", categoryField: "category",
-        labelFormat: "{valueY}%"
-    });
-    Tochnyi.applyBarColors(series); // Multi-color bars
-    series.data.setAll(data);
-
-    chart.appear(1000, 100);
-});
-```
-
-### Grouped Bar Chart
-```javascript
-am5.ready(function() {
-    var root = Tochnyi.createRoot("chartdiv");
-    var chart = root.container.children.push(am5xy.XYChart.new(root, {
-        panX: false, panY: false, wheelX: "none", wheelY: "none",
-        paddingLeft: 10, paddingRight: 10, layout: root.verticalLayout
-    }));
-
-    var data = [
-        { category: "Category A", before: 2, after: 4 },
-        { category: "Category B", before: 1, after: 2 }
-    ];
-
-    var xRenderer = Tochnyi.createXRenderer(root, { cellStartLocation: 0.1, cellEndLocation: 0.9 });
-    var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-        categoryField: "category", renderer: xRenderer
-    }));
-    xAxis.data.setAll(data);
-
-    var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-        min: 0, numberFormat: "#'%'",
-        renderer: Tochnyi.createYRenderer(root)
-    }));
-
-    var series1 = Tochnyi.createColumnSeries(root, chart, {
-        name: "Before", xAxis: xAxis, yAxis: yAxis,
-        valueField: "before", categoryField: "category",
-        color: Tochnyi.colors.blue, labelFormat: "{valueY}%"
-    });
-    series1.data.setAll(data);
-
-    var series2 = Tochnyi.createColumnSeries(root, chart, {
-        name: "After", xAxis: xAxis, yAxis: yAxis,
-        valueField: "after", categoryField: "category",
-        color: Tochnyi.colors.yellow, labelFormat: "{valueY}%",
-        labelColor: Tochnyi.colors.black  // Black text on yellow bars
-    });
-    series2.data.setAll(data);
-
-    var legend = Tochnyi.createLegend(root, chart);
-    legend.data.setAll(chart.series.values);
-
-    chart.appear(1000, 100);
-});
-```
-
-### Line Chart
-```javascript
-am5.ready(function() {
-    var root = Tochnyi.createRoot("chartdiv");
-    var chart = root.container.children.push(am5xy.XYChart.new(root, {
-        panX: true, panY: false, wheelX: "panX", wheelY: "zoomX",
-        paddingLeft: 10, paddingRight: 10, layout: root.verticalLayout
-    }));
-
-    var data = [
-        { date: "2020", value: 100 },
-        { date: "2021", value: 150 },
-        { date: "2022", value: 180 }
-    ];
-
-    var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
-        categoryField: "date",
-        renderer: Tochnyi.createXRenderer(root, { minGridDistance: 50 })
-    }));
-    xAxis.data.setAll(data);
-
-    var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
-        min: 0, renderer: Tochnyi.createYRenderer(root)
-    }));
-
-    var series = Tochnyi.createLineSeries(root, chart, {
-        name: "Trend", xAxis: xAxis, yAxis: yAxis,
-        valueField: "value", categoryField: "date",
-        color: Tochnyi.colors.blue
-    });
-    series.data.setAll(data);
-    series.appear(1000);
-
-    chart.appear(1000, 100);
-});
-```
-
-### Pie/Donut Chart
-```javascript
-am5.ready(function() {
-    var root = Tochnyi.createRoot("chartdiv");
-    var chart = root.container.children.push(am5percent.PieChart.new(root, {
-        layout: root.verticalLayout,
-        innerRadius: am5.percent(50) // Remove for solid pie
-    }));
-
-    var data = [
-        { category: "Part A", value: 60 },
-        { category: "Part B", value: 30 },
-        { category: "Part C", value: 10 }
-    ];
-
-    var series = Tochnyi.createPieSeries(root, chart, {
-        valueField: "value",
-        categoryField: "category",
-        labelFormat: "{category}: {value}%"
-    });
-    series.data.setAll(data);
-
-    // For donut charts, add center label
-    Tochnyi.addDonutCenterLabel(root, chart, "100K", "total");
-
-    var legend = Tochnyi.createLegend(root, chart);
-    legend.data.setAll(series.dataItems);
-
-    series.appear(1000, 100);
-});
-```
+**Important differences from this skill doc:**
+- `reference.html` uses `<img>` tag for logo (simpler than styled div)
+- Big numbers for donut charts use HTML `.tochnyi-big-number` div (not JS `addDonutCenterLabel()`)
+- Watermark positioning uses `.small` or `.corner` classes for flexibility
 
 ## Output
 
 After generating the chart:
-1. Create the `charts/` directory if it doesn't exist
-2. Save the HTML file with a descriptive filename (e.g., `charts/russia-bankruptcies-2025.html`)
+1. Create the `charts/[YYYY-week-WW]/` directory if it doesn't exist
+2. Save the HTML file with a descriptive filename (e.g., `charts/2026-week-04/russia-bankruptcies-2025.html`)
 3. Tell the user:
    - Why you chose this chart type
    - What data you extracted
    - The file path to open in their browser
+
+## Maintaining Consistency
+
+**When you fine-tune charts or discover better patterns:**
+- Update `reference.html` with the improvement
+- The next chart generation will automatically use the updated pattern
+- No need to update this skill file - just read from `reference.html`
+
+**Single source of truth hierarchy:**
+1. `reference.html` - Template structure, working code examples, visual patterns
+2. `lib/tochnyi.css` - All styling, colors, typography, layout
+3. `lib/tochnyi-charts.js` - Reusable helper functions
+4. This skill file - Workflow and decision-making guidance only

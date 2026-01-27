@@ -163,14 +163,14 @@
                     <span class="color-hex">#ffd500</span>
                 </div>
                 <div class="color-swatch">
-                    <div class="color-box" style="background: #245eab;"></div>
+                    <div class="color-box" style="background: #0088ff;"></div>
                     <span class="color-name">Blue Light</span>
-                    <span class="color-hex">#245eab</span>
+                    <span class="color-hex">#0088ff</span>
                 </div>
                 <div class="color-swatch">
-                    <div class="color-box" style="background: #fdd400;"></div>
+                    <div class="color-box" style="background: #cc9900;"></div>
                     <span class="color-name">Yellow Dark</span>
-                    <span class="color-hex">#fdd400</span>
+                    <span class="color-hex">#cc9900</span>
                 </div>
                 <div class="color-swatch">
                     <div class="color-box" style="background: #003d7a;"></div>
@@ -371,6 +371,13 @@ legend.data.<span class="function">setAll</span>(chart.series.values);
     categoryField: <span class="string">"category"</span>,
     labelFormat: <span class="string">"{category}: {value}%"</span>
 });
+series.data.<span class="function">setAll</span>(data);
+
+<span class="comment">// Legend: right side, aligned with pie center, vertical layout</span>
+<span class="keyword">var</span> legend = Tochnyi.<span class="function">createPieLegend</span>(root, chart);
+legend.data.<span class="function">setAll</span>(series.dataItems);
+
+series.<span class="function">appear</span>(<span class="number">1000</span>, <span class="number">100</span>);
             </div>
         </section>
 
@@ -398,6 +405,9 @@ legend.data.<span class="function">setAll</span>(chart.series.values);
 
 <span class="comment">&lt;!-- Corner position - for line charts or when default interferes --&gt;</span>
 &lt;div class="<span class="string">tochnyi-change-badge down corner</span>"&gt;&#9660; 0.4pp&lt;/div&gt;
+
+<span class="comment">&lt;!-- Left position - for donut charts with big numbers on the left --&gt;</span>
+&lt;div class="<span class="string">tochnyi-change-badge up left</span>"&gt;&#9650; 31.5%&lt;/div&gt;
             </div>
         </section>
 
@@ -430,12 +440,8 @@ legend.data.<span class="function">setAll</span>(chart.series.values);
     &lt;div class="<span class="string">tochnyi-chart</span>"&gt;
 
         &lt;div class="<span class="string">tochnyi-header</span>"&gt;
-            &lt;div class="<span class="string">tochnyi-logo</span>"&gt;
-                T&lt;span&gt;○&lt;/span&gt;chnyi
-            &lt;/div&gt;
-            &lt;div class="<span class="string">tochnyi-date</span>"&gt;
-                Date: <span class="string">[DATE]</span>
-            &lt;/div&gt;
+            &lt;img src="<span class="string">../../lib/tochnyi-logo.png</span>" class="<span class="string">tochnyi-logo</span>" alt="<span class="string">Tochnyi</span>"&gt;
+            &lt;div class="<span class="string">tochnyi-date</span>"&gt;Date: <span class="string">[DATE]</span>&lt;/div&gt;
         &lt;/div&gt;
 
         &lt;h1 class="<span class="string">tochnyi-title</span>"&gt;
@@ -447,6 +453,10 @@ legend.data.<span class="function">setAll</span>(chart.series.values);
         &lt;/p&gt;
 
         &lt;div id="<span class="string">chartdiv</span>" class="<span class="string">tochnyi-chart-container</span>"&gt;
+            &lt;img src="<span class="string">../../lib/watermark.svg</span>" class="<span class="string">tochnyi-watermark</span>" alt=""&gt;
+            <span class="comment">&lt;!-- Add change badge if needed: --&gt;</span>
+            <span class="comment">&lt;!-- &lt;div class="tochnyi-change-badge up"&gt;▲ 15%&lt;/div&gt; --&gt;</span>
+            <span class="comment">&lt;!-- For pie/donut charts, use class="tochnyi-watermark small" --&gt;</span>
         &lt;/div&gt;
 
         &lt;div class="<span class="string">tochnyi-source</span>"&gt;
@@ -623,7 +633,7 @@ legend.data.<span class="function">setAll</span>(chart.series.values);
                 });
                 series.data.setAll(data);
 
-                var legend = Tochnyi.createLegend(root, chart);
+                var legend = Tochnyi.createPieLegend(root, chart);
                 legend.data.setAll(series.dataItems);
                 series.appear(1000, 100);
             })();

@@ -1,0 +1,89 @@
+<!--
+CHART METADATA
+==============
+Week: 2026-week-04
+Date: 2026-01-27
+Chart Type: donut
+Topic: bankruptcy, consumer debt, financial hardship
+Country: Russia
+Data Period: 2025
+Source: User provided
+Key Finding: Personal bankruptcies in Russia surged 31.5% to 568,000 in 2025, with 97.3% initiated by individuals themselves
+Created By: Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
+-->
+
+<!--
+Original text:
+In 2025 the number of Russians who declared bankrupt rose by 31,5% to 568 000. 97,3% of those initiated the bankruptcy procedure on their own. 2,1% by the creditors and 0,6% by the Russian Federal Tax Service
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russian Personal Bankruptcies Surge 31.5% in 2025</title>
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../../lib/tochnyi.css">
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="../../lib/tochnyi-charts.js"></script>
+</head>
+<body>
+    <div class="tochnyi-chart">
+        <div class="tochnyi-header">
+            <img src="../../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
+            <div class="tochnyi-date">Date: January 27, 2026</div>
+        </div>
+
+        <h1 class="tochnyi-title">Russian Personal Bankruptcies Surge 31.5% in 2025</h1>
+        <p class="tochnyi-subtitle">568,000 Russians declared bankruptcy last year, with <span class="tochnyi-highlight">97.3% filing on their own</span> rather than being forced by creditors</p>
+
+        <div id="chartdiv" class="tochnyi-chart-container">
+            <img src="../../lib/watermark.svg" class="tochnyi-watermark small" alt="">
+            <div class="tochnyi-big-number">
+                <div class="number">568K</div>
+                <div class="label">Russians</div>
+            </div>
+            <div class="tochnyi-change-badge up left">▲ 31.5%</div>
+        </div>
+
+        <div class="tochnyi-source">Source: User provided data</div>
+
+        <div class="tochnyi-footer">
+            <span>Analysis by:</span>
+            <a href="https://x.com/delfoo">@delfoo</a>
+            <a href="https://bsky.app/profile/delfoo.bsky.social">@delfoo.bsky.social</a>
+        </div>
+    </div>
+
+    <script>
+        am5.ready(function() {
+            var root = Tochnyi.createRoot("chartdiv");
+            var chart = root.container.children.push(am5percent.PieChart.new(root, {
+                layout: root.verticalLayout,
+                innerRadius: am5.percent(50)
+            }));
+
+            var data = [
+                { category: "Self-initiated", value: 97.3 },
+                { category: "By creditors", value: 2.1 },
+                { category: "By Tax Service", value: 0.6 }
+            ];
+
+            var series = Tochnyi.createPieSeries(root, chart, {
+                valueField: "value",
+                categoryField: "category",
+                labelFormat: "{category}: {value}%"
+            });
+            series.data.setAll(data);
+
+            var legend = Tochnyi.createPieLegend(root, chart);
+            legend.data.setAll(series.dataItems);
+
+            series.appear(1000, 100);
+        });
+    </script>
+</body>
+</html>

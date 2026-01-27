@@ -11,8 +11,8 @@
 
     /* Secondary colors */
     --tochnyi-blue-dark: #003d7a;
-    --tochnyi-blue-light: #245eab;
-    --tochnyi-yellow-dark: #fdd400;
+    --tochnyi-blue-light: #0088ff;
+    --tochnyi-yellow-dark: #cc9900;
     --tochnyi-yellow-light: #ffeb3b;
 
     /* Neutrals */
@@ -115,7 +115,7 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 80%;
+    height: 100%;
     width: auto;
     pointer-events: none;
     z-index: 9999;
@@ -126,7 +126,7 @@ body {
     right: 20px;
     left: auto;
     transform: none;
-    height: 80px;
+    height: 160px;
 }
 
 .tochnyi-watermark.corner {
@@ -137,20 +137,23 @@ body {
     height: 100px;
 }
 
-/* ===== Source ===== */
+/* ===== Source & Footer Container ===== */
 .tochnyi-source {
     margin-top: 15px;
     font-size: 14px;
     color: var(--tochnyi-gray-light);
+    float: left;
 }
 
 /* ===== Footer ===== */
 .tochnyi-footer {
-    margin-top: 30px;
+    margin-top: 15px;
     display: flex;
+    justify-content: flex-end;
     gap: 20px;
-    font-size: 16px;
+    font-size: 14px;
     color: var(--tochnyi-black);
+    clear: none;
 }
 
 .tochnyi-footer a {
@@ -193,6 +196,14 @@ body {
 .tochnyi-change-badge.corner {
     top: 20px;
     right: 20px;
+    transform: none;
+}
+
+/* Left position - for donut charts with big numbers on the left */
+.tochnyi-change-badge.left {
+    top: 130px;
+    left: 20px;
+    right: auto;
     transform: none;
 }
 

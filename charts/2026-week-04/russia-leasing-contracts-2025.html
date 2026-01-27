@@ -1,37 +1,51 @@
 <!--
+CHART METADATA
+==============
+Week: 2026-week-04
+Date: 2026-01-27
+Chart Type: bar
+Topic: leasing, equipment financing, business investment
+Country: Russia
+Data Period: 2025
+Source: www.kommersant.ru/doc/8377659
+Key Finding: New leasing contracts in Russia plunged 30.3% in 2025 to 326,000, matching the severity of the 2022 decline
+Created By: Claude Sonnet 4.5 (claude-sonnet-4-5-20250929)
+-->
+
+<!--
 Original text:
-The turnover of Russian online stores in 2025 increased by 26%, the number of purchases
-increased by 16%. The number of stores with monthly revenue of more than 1 million rubles
-increased by 61%. The average purchase amount was 1400 rubles.
+In 2025 the volume of new leasing contracts in Russia decreased by 30,3% showing a decrease to 326 000. This is comparable to the drop in 2022.
 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Russia E-Commerce Growth 2025</title>
+    <title>Russian Leasing Contracts Plunge 30.3% in 2025</title>
     <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../lib/tochnyi.css">
+    <link rel="stylesheet" href="../../lib/tochnyi.css">
     <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
     <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
-    <script src="../lib/tochnyi-charts.js"></script>
+    <script src="../../lib/tochnyi-charts.js"></script>
 </head>
 <body>
     <div class="tochnyi-chart">
         <div class="tochnyi-header">
-            <img src="../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
-            <div class="tochnyi-date">Date: 2025-01-26</div>
+            <img src="../../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
+            <div class="tochnyi-date">Date: January 27, 2026</div>
         </div>
 
-        <h1 class="tochnyi-title">Russian E-Commerce Booming in 2025</h1>
-        <p class="tochnyi-subtitle">Online retail growth accelerates, <span class="tochnyi-highlight">average purchase ₽1,400</span></p>
+        <h1 class="tochnyi-title">Russian Leasing Contracts Plunge 30.3% in 2025</h1>
+        <p class="tochnyi-subtitle">New leasing agreements fell from <span class="tochnyi-highlight">468,000 to 326,000</span>, marking a decline comparable to the 2022 crisis</p>
 
         <div id="chartdiv" class="tochnyi-chart-container">
-            <img src="../lib/watermark.svg" class="tochnyi-watermark" alt="">
+            <img src="../../lib/watermark.svg" class="tochnyi-watermark" alt="">
+            <div class="tochnyi-change-badge down">▼ 30.3%</div>
         </div>
 
-        <div class="tochnyi-source">Source: Russian e-commerce market data</div>
+        <div class="tochnyi-source">Source: www.kommersant.ru/doc/8377659</div>
 
         <div class="tochnyi-footer">
             <span>Analysis by:</span>
@@ -54,9 +68,8 @@ increased by 61%. The average purchase amount was 1400 rubles.
             }));
 
             var data = [
-                { category: "Stores >₽1M/mo", value: 61 },
-                { category: "Total Turnover", value: 26 },
-                { category: "Number of Purchases", value: 16 }
+                { category: "2024", value: 468 },
+                { category: "2025", value: 326 }
             ];
 
             var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
@@ -67,19 +80,21 @@ increased by 61%. The average purchase amount was 1400 rubles.
 
             var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
                 min: 0,
-                max: 70,
-                numberFormat: "#'%'",
+                max: 500,
+                numberFormat: "#'K'",
                 renderer: Tochnyi.createYRenderer(root)
             }));
-            Tochnyi.addYAxisLabel(root, yAxis, "YEAR-OVER-YEAR GROWTH");
+
+            // Add Y-axis label
+            Tochnyi.addYAxisLabel(root, yAxis, "New Leasing Contracts");
 
             var series = Tochnyi.createColumnSeries(root, chart, {
-                name: "Growth",
+                name: "Contracts",
                 xAxis: xAxis,
                 yAxis: yAxis,
                 valueField: "value",
                 categoryField: "category",
-                labelFormat: "+{valueY}%"
+                labelFormat: "{valueY}K"
             });
             Tochnyi.applyBarColors(series);
             series.data.setAll(data);
