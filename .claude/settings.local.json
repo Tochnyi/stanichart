@@ -4,7 +4,12 @@
       "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/russia-grain-rail-exports-2026.html)",
       "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/turkey-europe-coal-prices-april-2026.html)",
       "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/baltic-petroleum-shipments-collapse-april-2026.html)",
-      "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/russia-small-business-unprofitable-2026.html)"
+      "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/russia-small-business-unprofitable-2026.html)",
+      "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/russia-vpn-downloads-march-2026.html)",
+      "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/norilsk-nickel-production-q1-2026.html)",
+      "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/russia-corporate-profits-q1-2026.html)",
+      "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/russia-housing-secondary-vs-primary-q1-2026.html)",
+      "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/russia-electronics-imports-q1-2026.html)"
     ]
   }
 }
