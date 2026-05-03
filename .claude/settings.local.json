@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/russia-grain-rail-exports-2026.html)",
+      "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/turkey-europe-coal-prices-april-2026.html)",
+      "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/baltic-petroleum-shipments-collapse-april-2026.html)",
+      "Bash(python c:/dev/workspace/tochnyi/stanichart/build-share.py c:/dev/workspace/tochnyi/stanichart/charts/2026-week-18/russia-small-business-unprofitable-2026.html)"
+    ]
+  }
+}

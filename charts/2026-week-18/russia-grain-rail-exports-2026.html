@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<!--
+DATA SOURCE PROMPT:
+
+Russian grain exports by rail are near record levels because poor harvests in
+the south shifted supply to the Central, Volga and Siberian regions, farther
+from Black Sea ports.
+
+From July 2025 to March 2026, rail exports reached 19.23 million tons (+35% YoY),
+close to the 2023-2024 record of 19.41 million tons. Wheat accounted for 86%
+(16.6 million tons). Rail's share of total grain exports rose to 40% this season,
+and in December-February reached 50% for grain and 52-56% for wheat — well
+above five-year averages.
+
+ROUTE GROWTH (Jul 2025 - Mar 2026 vs prior year):
+- Azov & Black Sea ports:   +40%
+- Far East crossings:       +60%
+- Caspian ports:           +150%
+- Central Asia:            +180%
+
+Rusagrotrans expects full-season rail grain exports of about 23.2 million tons.
+
+Source: https://www.kommersant.ru/doc/8623415
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russia's Grain Exports Pivot East and South</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700"
+          rel="stylesheet">
+    <link rel="stylesheet" href="../../lib/tochnyi.css">
+
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="../../lib/tochnyi-charts.js"></script>
+</head>
+
+<body>
+    <div class="tochnyi-chart">
+
+        <div class="tochnyi-header">
+            <img src="../../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
+            <div class="tochnyi-date">Date: May 2026</div>
+        </div>
+
+        <h1 class="tochnyi-title">
+            Russia's Grain Exports Pivot East and South
+        </h1>
+
+        <p class="tochnyi-subtitle">
+            Rail shipments by destination, July 2025–March 2026 vs prior year. Total rail volume reached 19.23 Mt — near the 2023–24 record of 19.41 Mt.
+        </p>
+
+        <div id="chartdiv" class="tochnyi-chart-container">
+            <img src="../../lib/watermark.svg" class="tochnyi-watermark" alt="">
+            <div class="tochnyi-change-badge up corner" style="color: #00aa00; border-color: #00aa00;">
+                &#9650; 35%
+                <div style="font-size: 11px; font-weight: 500; margin-top: -2px;">total rail YoY</div>
+            </div>
+        </div>
+
+        <div class="tochnyi-source">
+            Source: <a href="https://www.kommersant.ru/doc/8623415" style="color: var(--tochnyi-blue);">Kommersant</a>
+        </div>
+
+        <div class="tochnyi-footer">
+            <span>Analysis by:</span>
+            <a href="https://x.com/delfoo">@delfoo</a>
+            <a href="https://bsky.app/profile/delfoo.bsky.social">
+                @delfoo.bsky.social
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        am5.ready(function() {
+            var root = Tochnyi.createRoot("chartdiv");
+
+            var chart = root.container.children.push(am5xy.XYChart.new(root, {
+                panX: false,
+                panY: false,
+                wheelX: "none",
+                wheelY: "none",
+                paddingLeft: 10,
+                paddingRight: 10,
+                paddingTop: 30,
+                layout: root.verticalLayout
+            }));
+
+            // Ordered ascending by growth for visual crescendo
+            var data = [
+                { category: "Azov & Black Sea\nports",  value: 40,  label: "+40%" },
+                { category: "Far East\ncrossings",      value: 60,  label: "+60%" },
+                { category: "Caspian\nports",           value: 150, label: "+150%" },
+                { category: "Central Asia",             value: 180, label: "+180%" }
+            ];
+
+            var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+                categoryField: "category",
+                renderer: Tochnyi.createXRenderer(root, {
+                    cellStartLocation: 0.15,
+                    cellEndLocation: 0.85
+                })
+            }));
+            xAxis.get("renderer").labels.template.setAll({
+                fontSize: 18,
+                fontWeight: "500",
+                textAlign: "center",
+                oversizedBehavior: "wrap",
+                maxWidth: 200
+            });
+            xAxis.data.setAll(data);
+
+            var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+                min: 0,
+                max: 220,
+                numberFormat: "#'%'",
+                renderer: Tochnyi.createYRenderer(root)
+            }));
+
+            // Y axis title
+            yAxis.children.unshift(am5.Label.new(root, {
+                text: "YEAR-OVER-YEAR GROWTH",
+                rotation: -90,
+                y: am5.p50,
+                centerX: am5.p50,
+                fontSize: 14,
+                fontWeight: "600",
+                fill: am5.color(0x666666)
+            }));
+
+            var series = Tochnyi.createColumnSeries(root, chart, {
+                name: "YoY growth",
+                xAxis: xAxis,
+                yAxis: yAxis,
+                valueField: "value",
+                categoryField: "category",
+                showLabels: false
+            });
+            Tochnyi.applyBarColors(series);
+
+            // Custom label inside each bar showing the percentage,
+            // with adaptive text color for the yellow bar.
+            series.bullets.push(function(root, series, dataItem) {
+                var index = series.dataItems.indexOf(dataItem);
+                var barColor = series._tochnyiPalette[index % series._tochnyiPalette.length];
+                var textColor = Tochnyi.isLightColor(barColor) ? Tochnyi.colors.black : 0xffffff;
+                return am5.Bullet.new(root, {
+                    locationY: 0.5,
+                    sprite: am5.Label.new(root, {
+                        text: dataItem.dataContext.label,
+                        centerX: am5.p50,
+                        centerY: am5.p50,
+                        fontSize: 28,
+                        fontWeight: "700",
+                        fontFamily: "Mukta",
+                        fill: am5.color(textColor),
+                        textAlign: "center"
+                    })
+                });
+            });
+
+            series.data.setAll(data);
+            chart.appear(1000, 100);
+        });
+    </script>
+
+</body>
+</html>

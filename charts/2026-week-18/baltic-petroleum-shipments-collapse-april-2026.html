@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<!--
+DATA SOURCE PROMPT:
+
+Russian petroleum product exports are being squeezed by tighter tanker
+availability after the EU's 20th sanctions package and Greek shipowners
+withdrawing from Russian cargoes (previously 10-20% of shipments).
+
+In the Baltic, available tankers fell to 8-9 in the week of April 20-26, 2026
+— the lowest since early February 2026. Freight rates for 30,000 dwt
+Handysize tankers rose 4-6% to $140-183/ton.
+
+KEY NUMBER:
+- Apr 20-26 light petroleum shipments from Baltic: 6
+- 2026 weekly average for the same period:        ~21 (estimated, from -72%)
+- Drop:                                            -72%
+
+Tuapse exports are constrained by railway restrictions and an April 28
+Ukrainian strike that caused a major fire at the refinery.
+
+Source: Kommersant
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baltic Petroleum Shipments Collapse Under EU Sanctions</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700"
+          rel="stylesheet">
+    <link rel="stylesheet" href="../../lib/tochnyi.css">
+
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="../../lib/tochnyi-charts.js"></script>
+</head>
+
+<body>
+    <div class="tochnyi-chart">
+
+        <div class="tochnyi-header">
+            <img src="../../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
+            <div class="tochnyi-date">Date: April 26, 2026</div>
+        </div>
+
+        <h1 class="tochnyi-title">
+            Baltic Petroleum Shipments Collapse Under EU Sanctions
+        </h1>
+
+        <p class="tochnyi-subtitle">
+            Light petroleum shipments leaving Baltic ports, week of April 20–26 vs 2026 weekly average. Greek shipowner withdrawals tighten tanker availability to 8–9 vessels, the lowest since early February.
+        </p>
+
+        <div id="chartdiv" class="tochnyi-chart-container">
+            <img src="../../lib/watermark.svg" class="tochnyi-watermark" alt="">
+            <div class="tochnyi-change-badge down corner">
+                &#9660; 72%
+                <div style="font-size: 11px; font-weight: 500; margin-top: -2px;">vs 2026 average</div>
+            </div>
+        </div>
+
+        <div class="tochnyi-source">
+            Source: <a href="https://www.kommersant.ru/" style="color: var(--tochnyi-blue);">Kommersant</a>
+        </div>
+
+        <div class="tochnyi-footer">
+            <span>Analysis by:</span>
+            <a href="https://x.com/delfoo">@delfoo</a>
+            <a href="https://bsky.app/profile/delfoo.bsky.social">
+                @delfoo.bsky.social
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        am5.ready(function() {
+            var root = Tochnyi.createRoot("chartdiv");
+
+            var chart = root.container.children.push(am5xy.XYChart.new(root, {
+                panX: false,
+                panY: false,
+                wheelX: "none",
+                wheelY: "none",
+                paddingLeft: 10,
+                paddingRight: 10,
+                layout: root.verticalLayout
+            }));
+
+            var data = [
+                { category: "2026 weekly average\n(same period)", value: 21, label: "~21" },
+                { category: "Apr 20–26, 2026",                    value: 6,  label: "6" }
+            ];
+
+            var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+                categoryField: "category",
+                renderer: Tochnyi.createXRenderer(root, {
+                    cellStartLocation: 0.2,
+                    cellEndLocation: 0.8
+                })
+            }));
+            xAxis.get("renderer").labels.template.setAll({
+                fontSize: 18,
+                textAlign: "center",
+                oversizedBehavior: "wrap",
+                maxWidth: 280
+            });
+            xAxis.data.setAll(data);
+
+            var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+                min: 0,
+                max: 25,
+                numberFormat: "#",
+                renderer: Tochnyi.createYRenderer(root)
+            }));
+
+            yAxis.children.unshift(am5.Label.new(root, {
+                text: "SHIPMENTS PER WEEK",
+                rotation: -90,
+                y: am5.p50,
+                centerX: am5.p50,
+                fontSize: 14,
+                fontWeight: "600",
+                fill: am5.color(0x666666)
+            }));
+
+            var series = Tochnyi.createColumnSeries(root, chart, {
+                name: "Shipments",
+                xAxis: xAxis,
+                yAxis: yAxis,
+                valueField: "value",
+                categoryField: "category",
+                showLabels: false
+            });
+            Tochnyi.applyBarColors(series);
+
+            series.bullets.push(function(root, series, dataItem) {
+                var index = series.dataItems.indexOf(dataItem);
+                var barColor = series._tochnyiPalette[index % series._tochnyiPalette.length];
+                var textColor = Tochnyi.isLightColor(barColor) ? Tochnyi.colors.black : 0xffffff;
+                return am5.Bullet.new(root, {
+                    locationY: 0.5,
+                    sprite: am5.Label.new(root, {
+                        text: dataItem.dataContext.label,
+                        centerX: am5.p50,
+                        centerY: am5.p50,
+                        fontSize: 32,
+                        fontWeight: "700",
+                        fontFamily: "Mukta",
+                        fill: am5.color(textColor),
+                        textAlign: "center"
+                    })
+                });
+            });
+
+            series.data.setAll(data);
+            chart.appear(1000, 100);
+        });
+    </script>
+
+</body>
+</html>

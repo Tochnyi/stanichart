@@ -32,6 +32,7 @@ Tochnyi Charts helps you create professional, publication-ready data visualizati
 stanichart/
 ├── README.md                          # This file
 ├── reference.html                     # Master reference with all chart examples
+├── build-share.py                     # Build a self-contained version of any chart
 ├── lib/
 │   ├── tochnyi.css                   # Shared styles and variables
 │   ├── tochnyi-charts.js             # AMCharts helper functions
@@ -99,9 +100,24 @@ Claude will:
 
 Open the generated HTML file in your browser. The chart is:
 - **Interactive** - Powered by AMCharts 5
-- **Standalone** - No server needed, works offline
-- **Shareable** - Send the HTML file or screenshot it
 - **Print-ready** - Optimized for social media and reports
+- **Shareable** - Screenshot it, or build a self-contained HTML (see below)
+
+### 5. Share a Chart as a Single HTML File
+
+By default, generated charts reference `lib/tochnyi.css`, `lib/tochnyi-charts.js`, the logo, and the watermark — so the HTML file alone won't render if you send it on its own. To produce a portable single-file version, run the build script:
+
+```bash
+python build-share.py charts/2026-week-18/my-chart.html
+```
+
+This writes `my-chart-share.html` next to the source. It inlines:
+- `tochnyi.css` as a `<style>` block
+- `tochnyi-charts.js` as a `<script>` block
+- The logo PNG as a base64 data URI
+- The watermark SVG inline (with namespaced classes to avoid collisions)
+
+AMCharts and Google Fonts still load from CDN, so the share file needs internet to render — but it no longer depends on any local file. Send it via email, attach to a message, or host it anywhere.
 
 ## Chart Types
 
