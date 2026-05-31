@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<!--
+DATA SOURCE PROMPT:
+
+Ukrainian strikes on Russian logistics targets in occupied Ukraine,
+broken down by target category. Records aggregated from Tochnyi
+LogiMap's strikes.geojson (895 records, June 2025 – May 2026) and
+classified using the same taxonomy as the LogiMap UI (see
+strike-config.ts → TARGET_TYPES + classifyTarget).
+
+CATEGORY            COUNT   COLOR
+Military base         247   #1e4f8c
+Land forces           195   #2e5c1c
+Storage facility      140   #a06914
+Ammunition store      137   #8b1c20
+Fuel storage           91   #b14a16
+Rail target            85   #1d7272
+
+Taxonomy notes (from classifyTarget):
+- "Training Grounds" → military_base
+- "Train" / "Locomotive" / "Railway Station" → railway
+
+Source: https://tochnyi.info/2026/05/logistics-lockdown-disrupting-the-road-logistics-network-of-russia-in-the-occupied-territories-of-ukraine/
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ukraine's Strikes on Russian Logistics by Target Type</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700"
+          rel="stylesheet">
+    <style>
+/**
+ * Tochnyi Chart Styles
+ * Ukrainian-themed data visualization styling
+ */
+
+/* ===== CSS Variables ===== */
+:root {
+    /* Primary colors (Ukrainian flag) */
+    --tochnyi-blue: #005bbb;
+    --tochnyi-yellow: #ffd500;
+
+    /* Secondary colors */
+    --tochnyi-blue-dark: #003d7a;
+    --tochnyi-blue-light: #0088ff;
+    --tochnyi-yellow-dark: #cc9900;
+    --tochnyi-yellow-light: #ffeb3b;
+
+    /* Neutrals */
+    --tochnyi-black: #020303;
+    --tochnyi-gray: #666666;
+    --tochnyi-gray-light: gray;
+    --tochnyi-white: #ffffff;
+
+    /* Grid */
+    --tochnyi-grid-opacity: 0.3;
+
+    /* Typography */
+    --tochnyi-font: 'Mukta', sans-serif;
+
+    /* Spacing */
+    --tochnyi-padding: 40px;
+    --tochnyi-max-width: 1200px;
+}
+
+/* ===== Reset ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===== Base ===== */
+body {
+    font-family: var(--tochnyi-font);
+    background-color: var(--tochnyi-white);
+    min-height: 100vh;
+    padding: var(--tochnyi-padding);
+    color: var(--tochnyi-black);
+}
+
+/* ===== Chart Wrapper ===== */
+.tochnyi-chart {
+    max-width: var(--tochnyi-max-width);
+    margin: 0 auto;
+}
+
+/* ===== Header ===== */
+.tochnyi-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.tochnyi-logo {
+    height: 40px;
+    width: auto;
+}
+
+.tochnyi-date {
+    color: var(--tochnyi-gray-light);
+    font-size: 20px;
+}
+
+/* ===== Title ===== */
+.tochnyi-title {
+    text-align: center;
+    color: var(--tochnyi-black);
+    font-size: 42px;
+    font-weight: 400;
+    margin-bottom: 10px;
+}
+
+.tochnyi-subtitle {
+    text-align: center;
+    color: var(--tochnyi-gray);
+    font-size: 22px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+.tochnyi-highlight {
+    color: var(--tochnyi-blue);
+    font-weight: 600;
+}
+
+/* ===== Chart Container ===== */
+.tochnyi-chart-container {
+    width: 100%;
+    height: 550px;
+    position: relative;
+}
+
+.tochnyi-chart-container.short {
+    height: 400px;
+}
+
+.tochnyi-chart-container.tall {
+    height: 700px;
+}
+
+/* ===== Watermark ===== */
+.tochnyi-watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 100%;
+    width: auto;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+.tochnyi-watermark.small {
+    top: 20px;
+    right: 20px;
+    left: auto;
+    transform: none;
+    height: 160px;
+}
+
+.tochnyi-watermark.corner {
+    top: 20px;
+    right: 20px;
+    left: auto;
+    transform: none;
+    height: 100px;
+}
+
+/* ===== Source & Footer Container ===== */
+.tochnyi-source {
+    margin-top: 15px;
+    font-size: 14px;
+    color: var(--tochnyi-gray-light);
+    float: left;
+}
+
+/* ===== Footer ===== */
+.tochnyi-footer {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    font-size: 14px;
+    color: var(--tochnyi-black);
+    clear: none;
+}
+
+.tochnyi-footer a {
+    color: var(--tochnyi-blue);
+    text-decoration: none;
+}
+
+.tochnyi-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Change Badge ===== */
+.tochnyi-change-badge {
+    position: absolute;
+    top: 50%;
+    right: 380px;
+    transform: translateY(-50%);
+    font-family: var(--tochnyi-font);
+    font-size: 32px;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 8px;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tochnyi-change-badge.down {
+    color: #cc0000;
+    background: rgba(255, 255, 255, 0.9);
+    border: 3px solid #cc0000;
+}
+
+.tochnyi-change-badge.up {
+    color: #00aa00;
+    background: rgba(255, 255, 255, 0.9);
+    border: 3px solid #00aa00;
+}
+
+/* Corner position - for line charts or when default position interferes */
+.tochnyi-change-badge.corner {
+    top: 20px;
+    right: 20px;
+    transform: none;
+}
+
+/* Left position - for donut charts with big numbers on the left */
+.tochnyi-change-badge.left {
+    top: 130px;
+    left: 20px;
+    right: auto;
+    transform: none;
+}
+
+/* ===== Big Number (for pie/donut charts) ===== */
+.tochnyi-big-number {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    text-align: left;
+    z-index: 100;
+}
+
+.tochnyi-big-number .number {
+    font-family: var(--tochnyi-font);
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--tochnyi-blue);
+    line-height: 1;
+}
+
+.tochnyi-big-number .label {
+    font-family: var(--tochnyi-font);
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--tochnyi-gray);
+    text-transform: uppercase;
+}
+
+/* ===== Utility Classes ===== */
+.text-blue { color: var(--tochnyi-blue); }
+.text-yellow { color: var(--tochnyi-yellow); }
+.text-gray { color: var(--tochnyi-gray); }
+.text-center { text-align: center; }
+.text-bold { font-weight: 700; }
+.text-semibold { font-weight: 600; }
+.text-medium { font-weight: 500; }
+
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+.mt-30 { margin-top: 30px; }
+.mb-10 { margin-bottom: 10px; }
+.mb-20 { margin-bottom: 20px; }
+.mb-30 { margin-bottom: 30px; }
+
+</style>
+
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script>
+/**
+ * Tochnyi Charts Library
+ * Helper functions for creating AMCharts in Tochnyi style
+ */
+
+const Tochnyi = {
+    // Color palette
+    colors: {
+        blue: 0x005bbb,
+        yellow: 0xffd500,
+        blueDark: 0x003d7a,
+        blueLight: 0x0088ff,
+        yellowDark: 0xcc9900,
+        yellowLight: 0xffeb3b,
+        black: 0x020303,
+        gray: 0x666666,
+        white: 0xffffff
+    },
+
+    // Color palette as array (for series)
+    palette: [0x005bbb, 0xffd500, 0x0088ff, 0xcc9900, 0x003d7a, 0xffeb3b],
+
+    // Typography settings
+    font: {
+        family: "Mukta",
+        sizes: {
+            small: 14,
+            normal: 18,
+            medium: 20,
+            large: 24,
+            xlarge: 28,
+            title: 32
+        },
+        weights: {
+            regular: "400",
+            medium: "500",
+            semibold: "600",
+            bold: "700"
+        }
+    },
+
+    /**
+     * Initialize a chart root with Tochnyi theme
+     */
+    createRoot: function(containerId) {
+        var root = am5.Root.new(containerId);
+        root.setThemes([am5themes_Animated.new(root)]);
+        return root;
+    },
+
+    /**
+     * Create standard X-axis renderer with Tochnyi styling
+     */
+    createXRenderer: function(root, options = {}) {
+        var renderer = am5xy.AxisRendererX.new(root, {
+            minGridDistance: options.minGridDistance || 30,
+            cellStartLocation: options.cellStartLocation || 0.15,
+            cellEndLocation: options.cellEndLocation || 0.85,
+            ...options
+        });
+
+        renderer.labels.template.setAll({
+            fontSize: options.fontSize || this.font.sizes.medium,
+            fontFamily: this.font.family,
+            fontWeight: options.fontWeight || this.font.weights.medium
+        });
+
+        renderer.grid.template.setAll({
+            visible: options.showGrid !== undefined ? options.showGrid : false
+        });
+
+        return renderer;
+    },
+
+    /**
+     * Create standard Y-axis renderer with Tochnyi styling
+     */
+    createYRenderer: function(root, options = {}) {
+        var renderer = am5xy.AxisRendererY.new(root, {
+            strokeOpacity: 0.3,
+            ...options
+        });
+
+        renderer.labels.template.setAll({
+            fontSize: options.fontSize || this.font.sizes.normal,
+            fontFamily: this.font.family,
+            fontWeight: options.fontWeight || this.font.weights.medium
+        });
+
+        renderer.grid.template.setAll({
+            strokeOpacity: 0.3
+        });
+
+        return renderer;
+    },
+
+    /**
+     * Add Y-axis label (rotated title)
+     */
+    addYAxisLabel: function(root, yAxis, text) {
+        yAxis.children.unshift(am5.Label.new(root, {
+            rotation: -90,
+            text: text,
+            y: am5.percent(50),
+            centerX: am5.percent(50),
+            fontSize: this.font.sizes.small + 2,
+            fontWeight: this.font.weights.semibold,
+            fontFamily: this.font.family
+        }));
+    },
+
+    /**
+     * Add X-axis label (bottom title)
+     */
+    addXAxisLabel: function(root, xAxis, text) {
+        xAxis.children.push(am5.Label.new(root, {
+            text: text,
+            x: am5.percent(50),
+            centerX: am5.percent(50),
+            fontSize: this.font.sizes.small + 2,
+            fontWeight: this.font.weights.semibold,
+            fontFamily: this.font.family,
+            paddingTop: 10
+        }));
+    },
+
+    /**
+     * Create a legend with Tochnyi styling
+     */
+    createLegend: function(root, chart, options = {}) {
+        var legend = chart.children.push(am5.Legend.new(root, {
+            centerX: options.centerX !== undefined ? options.centerX : am5.percent(50),
+            x: options.x !== undefined ? options.x : am5.percent(50),
+            y: options.y,
+            marginTop: options.marginTop || 20,
+            marginLeft: options.marginLeft || 0,
+            layout: options.layout || root.horizontalLayout
+        }));
+
+        legend.labels.template.setAll({
+            fontSize: this.font.sizes.normal,
+            fontFamily: this.font.family,
+            fontWeight: this.font.weights.medium
+        });
+
+        return legend;
+    },
+
+    /**
+     * Create a legend for pie charts (positioned right, aligned with pie center)
+     */
+    createPieLegend: function(root, chart) {
+        var legend = chart.children.push(am5.Legend.new(root, {
+            x: am5.percent(100),
+            centerX: am5.percent(100),
+            y: am5.percent(50),
+            centerY: 0,
+            layout: root.verticalLayout
+        }));
+
+        legend.labels.template.setAll({
+            fontSize: this.font.sizes.normal,
+            fontFamily: this.font.family,
+            fontWeight: this.font.weights.medium
+        });
+
+        return legend;
+    },
+
+    /**
+     * Create column series with Tochnyi styling
+     */
+    createColumnSeries: function(root, chart, options) {
+        var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+            name: options.name,
+            xAxis: options.xAxis,
+            yAxis: options.yAxis,
+            valueYField: options.valueField,
+            categoryXField: options.categoryField,
+            fill: am5.color(options.color || this.colors.blue),
+            stroke: am5.color(options.color || this.colors.blue),
+            sequencedInterpolation: true
+        }));
+
+        series.columns.template.setAll({
+            tooltipText: options.tooltipText || "{name}: {valueY}",
+            width: am5.percent(options.width || 80),
+            cornerRadiusTL: 4,
+            cornerRadiusTR: 4
+        });
+
+        // Add value labels if requested
+        if (options.showLabels !== false) {
+            var labelColor = options.labelColor || 0xffffff;
+            series.bullets.push(function() {
+                var label = am5.Label.new(root, {
+                    text: options.labelFormat || "{valueY}",
+                    fill: am5.color(labelColor),
+                    centerY: am5.percent(50),
+                    centerX: am5.percent(50),
+                    fontSize: Tochnyi.font.sizes.xlarge,
+                    fontWeight: Tochnyi.font.weights.bold,
+                    fontFamily: Tochnyi.font.family,
+                    populateText: true
+                });
+
+                // Add adapter for dynamic label color when using applyBarColors
+                label.adapters.add("fill", function(fill, target) {
+                    if (series._tochnyiPalette && target.dataItem) {
+                        var index = series.dataItems.indexOf(target.dataItem);
+                        var barColor = series._tochnyiPalette[index % series._tochnyiPalette.length];
+                        var textColor = series._tochnyiSelf.isLightColor(barColor) ? Tochnyi.colors.black : 0xffffff;
+                        return am5.color(textColor);
+                    }
+                    return fill;
+                });
+
+                return am5.Bullet.new(root, {
+                    locationY: options.labelLocation || 0.5,
+                    sprite: label
+                });
+            });
+        }
+
+        return series;
+    },
+
+    /**
+     * Create line series with Tochnyi styling
+     */
+    createLineSeries: function(root, chart, options) {
+        var series = chart.series.push(am5xy.LineSeries.new(root, {
+            name: options.name,
+            xAxis: options.xAxis,
+            yAxis: options.yAxis,
+            valueYField: options.valueField,
+            categoryXField: options.categoryField,
+            stroke: am5.color(options.color || this.colors.blue),
+            fill: am5.color(options.color || this.colors.blue)
+        }));
+
+        series.strokes.template.setAll({
+            strokeWidth: options.strokeWidth || 3
+        });
+
+        // Add bullet points
+        if (options.showBullets !== false) {
+            series.bullets.push(function() {
+                return am5.Bullet.new(root, {
+                    sprite: am5.Circle.new(root, {
+                        radius: options.bulletRadius || 6,
+                        fill: am5.color(options.color || Tochnyi.colors.blue),
+                        stroke: am5.color(Tochnyi.colors.white),
+                        strokeWidth: 2
+                    })
+                });
+            });
+        }
+
+        return series;
+    },
+
+    /**
+     * Create pie/donut chart series with Tochnyi styling
+     * Options:
+     *   - minLabelPercent: Hide labels for slices smaller than this % (default: 5)
+     */
+    createPieSeries: function(root, chart, options) {
+        var series = chart.series.push(am5percent.PieSeries.new(root, {
+            valueField: options.valueField || "value",
+            categoryField: options.categoryField || "category",
+            alignLabels: options.alignLabels !== undefined ? options.alignLabels : false
+        }));
+
+        series.slices.template.setAll({
+            strokeWidth: 3,
+            stroke: am5.color(this.colors.white),
+            tooltipText: options.tooltipText || "{category}: {value}"
+        });
+
+        series.get("colors").set("colors",
+            (options.colors || this.palette).map(c => am5.color(c))
+        );
+
+        series.labels.template.setAll({
+            fontSize: this.font.sizes.normal,
+            fontFamily: this.font.family,
+            fontWeight: this.font.weights.medium,
+            text: options.labelFormat || "{category}: {value}%",
+            radius: 10
+        });
+
+        // Hide labels for small slices to avoid overlap
+        var minPercent = options.minLabelPercent !== undefined ? options.minLabelPercent : 5;
+        series.labels.template.adapters.add("visible", function(visible, target) {
+            if (target.dataItem) {
+                var percent = target.dataItem.get("valuePercentTotal");
+                return percent >= minPercent;
+            }
+            return visible;
+        });
+
+        // Also hide ticks for small slices
+        series.ticks.template.adapters.add("visible", function(visible, target) {
+            if (target.dataItem) {
+                var percent = target.dataItem.get("valuePercentTotal");
+                return percent >= minPercent;
+            }
+            return visible;
+        });
+
+        return series;
+    },
+
+    /**
+     * Add center label for donut charts
+     */
+    addDonutCenterLabel: function(root, chart, mainText, subText) {
+        chart.seriesContainer.children.push(am5.Label.new(root, {
+            text: mainText,
+            fontSize: 48,
+            fontWeight: this.font.weights.bold,
+            fontFamily: this.font.family,
+            fill: am5.color(this.colors.blue),
+            centerX: am5.percent(50),
+            centerY: am5.percent(50),
+            x: am5.percent(50),
+            y: am5.percent(50)
+        }));
+
+        if (subText) {
+            chart.seriesContainer.children.push(am5.Label.new(root, {
+                text: subText,
+                fontSize: this.font.sizes.normal,
+                fontWeight: this.font.weights.medium,
+                fontFamily: this.font.family,
+                fill: am5.color(this.colors.gray),
+                centerX: am5.percent(50),
+                centerY: am5.percent(50),
+                x: am5.percent(50),
+                y: am5.percent(50),
+                dy: 35
+            }));
+        }
+    },
+
+    /**
+     * Add annotation label to chart
+     */
+    addAnnotation: function(root, chart, text, options = {}) {
+        chart.children.push(am5.Label.new(root, {
+            text: text,
+            fontSize: options.fontSize || this.font.sizes.normal,
+            fontFamily: this.font.family,
+            fontWeight: options.fontWeight || this.font.weights.bold,
+            fill: am5.color(options.color || this.colors.blue),
+            x: am5.percent(options.x || 50),
+            y: am5.percent(options.y || 10),
+            centerX: am5.percent(options.centerX || 50)
+        }));
+    },
+
+    /**
+     * Check if a color is light (needs dark text)
+     */
+    isLightColor: function(color) {
+        // Yellow colors need black text
+        var lightColors = [0xffd500, 0xfdd400, 0xffeb3b];
+        return lightColors.includes(color);
+    },
+
+    /**
+     * Apply multi-color to bars based on index
+     */
+    applyBarColors: function(series, colors) {
+        var palette = colors || this.palette;
+        var self = this;
+
+        series.columns.template.adapters.add("fill", function(fill, target) {
+            var dataItem = target.dataItem;
+            if (dataItem) {
+                var index = series.dataItems.indexOf(dataItem);
+                return am5.color(palette[index % palette.length]);
+            }
+            return fill;
+        });
+
+        series.columns.template.adapters.add("stroke", function(stroke, target) {
+            var dataItem = target.dataItem;
+            if (dataItem) {
+                var index = series.dataItems.indexOf(dataItem);
+                return am5.color(palette[index % palette.length]);
+            }
+            return stroke;
+        });
+
+        // Store palette on series for label color lookup
+        series._tochnyiPalette = palette;
+        series._tochnyiSelf = self;
+    },
+
+    /**
+     * Get today's date formatted
+     */
+    getFormattedDate: function() {
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = String(today.getMonth() + 1).padStart(2, '0');
+        var day = String(today.getDate()).padStart(2, '0');
+        return year + '-' + month + '-' + day;
+    }
+};
+
+// Export for module systems
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = Tochnyi;
+}
+
+</script>
+</head>
+
+<body>
+    <div class="tochnyi-chart">
+
+        <div class="tochnyi-header">
+            <img src="data:image/png;base64,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" class="tochnyi-logo" alt="Tochnyi">
+            <div class="tochnyi-date">Date: May 2026</div>
+        </div>
+
+        <h1 class="tochnyi-title">
+            What Ukraine Strikes on Russian Logistics
+        </h1>
+
+        <p class="tochnyi-subtitle">
+            Confirmed strikes in occupied Ukraine, June 2025 – May 2026 (n = 895), by target category. Military bases and land forces lead; rail targets are rarest.
+        </p>
+
+        <div id="chartdiv" class="tochnyi-chart-container">
+            <svg class="tochnyi-watermark" id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 241.54 241.93">
+  <defs>
+    <style>
+      .wm-cls-1 {
+        fill: #005bbb;
+      }
+
+      .wm-cls-2 {
+        fill: #010202;
+        opacity: .05;
+      }
+
+      .wm-cls-3 {
+        fill: #ffd500;
+      }
+
+      .wm-cls-4 {
+        opacity: .08;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <path class="wm-cls-2" d="M133.2,241.14c-47.05,5.62-97.83-18.92-121.15-67.71C-10.87,125.47-.84,68.47,40.03,30.98,78.09-3.94,136.26-10.09,181.53,16.35c45.97,26.85,64.07,76.84,59.25,117.35-4.36-4.22-9.06-7.11-14.71-8.16-3.67-.69-7.27-1.76-10.95-2.31-2.75-.41-3.79-1.39-3.91-4.38-.72-18.3-6.08-35.08-16.57-50.26-30.08-43.56-93.46-51.31-133-16.05-21,18.73-31.72,42.15-31.15,70.38.84,41.5,29.76,77.04,70.08,86.38,6.03,1.4,12.15,2.35,18.37,2.1,2.2-.09,3.2.6,3.59,2.89.68,4.05,1.88,8.02,2.63,12.06,1.05,5.62,3.31,10.54,8.04,14.78Z"/>
+      <g class="wm-cls-4">
+        <path class="wm-cls-3" d="M236.09,214.86c8.04,8.18,6.8,19.44-2.55,24.98-2.31,1.37-4.78,1.84-7.73,1.8-4.78.31-8.44-2.46-11.8-5.81-10.4-10.37-20.87-20.69-31.14-31.2-2.15-2.2-3.27-2.55-5.6-.12-7.39,7.73-15.1,15.15-22.66,22.73-2.55,2.56-5.28,4.64-9.18,3.45-3.72-1.15-4.81-4.2-5.58-7.64-7.02-31.11-14.13-62.21-21.17-93.32-1.87-8.22,2.44-12.46,10.6-10.6,30.85,7.04,61.7,14.07,92.55,21.12,3.29.75,6.62,1.53,8.02,5.22,1.35,3.57.31,6.46-2.33,9.08-7.51,7.44-14.79,15.12-22.49,22.35-3.09,2.9-2.6,4.4.15,7.08,10.44,10.15,20.69,20.51,30.9,30.89Z"/>
+      </g>
+      <g class="wm-cls-4">
+        <path class="wm-cls-1" d="M180.83,111.75c.45,2.86.47,3.95-3.02,3.04-8.96-2.34-18.01-4.34-27.06-6.32-1.85-.41-2.83-1.39-3.77-2.9-6.99-11.22-19.11-16.9-31.21-14.73-12.67,2.27-22.04,11.55-24.77,24.54-2.42,11.49,3.2,24.72,13.46,31.09,2.18,1.35,3.28,2.96,3.81,5.36,1.85,8.42,3.82,16.81,5.73,25.22,1.01,4.46.67,4.88-3.99,3.85-19.8-4.37-34.68-15.24-43.7-33.62-4.15-8.45-6.08-17.46-5.9-26.23-.72-29.24,22.43-55.75,50.74-60.04,33.67-5.09,64.55,17.72,69.69,50.75Z"/>
+      </g>
+    </g>
+  </g>
+</svg>
+        </div>
+
+        <div class="tochnyi-source">
+            Source: <a href="https://tochnyi.info/2026/05/logistics-lockdown-disrupting-the-road-logistics-network-of-russia-in-the-occupied-territories-of-ukraine/" style="color: var(--tochnyi-blue);">Tochnyi — Logistics Lockdown</a>
+        </div>
+
+        <div class="tochnyi-footer">
+            <span>Analysis by:</span>
+            <a href="https://x.com/delfoo">@delfoo</a>
+            <a href="https://bsky.app/profile/delfoo.bsky.social">
+                @delfoo.bsky.social
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        am5.ready(function() {
+            var root = Tochnyi.createRoot("chartdiv");
+
+            var chart = root.container.children.push(am5xy.XYChart.new(root, {
+                panX: false,
+                panY: false,
+                wheelX: "none",
+                wheelY: "none",
+                paddingLeft: 10,
+                paddingRight: 10,
+                paddingTop: 20,
+                layout: root.verticalLayout
+            }));
+
+            // Colors mirror LogiMap's TARGET_TYPES in strike-config.ts.
+            // Ordered ascending so the bars rise left-to-right.
+            var data = [
+                { category: "Rail\ntarget",        value: 85,  color: 0x1d7272 },
+                { category: "Fuel\nstorage",       value: 91,  color: 0xb14a16 },
+                { category: "Ammunition\nstore",   value: 137, color: 0x8b1c20 },
+                { category: "Storage\nfacility",   value: 140, color: 0xa06914 },
+                { category: "Land\nforces",        value: 195, color: 0x2e5c1c },
+                { category: "Military\nbase",      value: 247, color: 0x1e4f8c }
+            ];
+
+            var xAxis = chart.xAxes.push(am5xy.CategoryAxis.new(root, {
+                categoryField: "category",
+                renderer: Tochnyi.createXRenderer(root, {
+                    cellStartLocation: 0.15,
+                    cellEndLocation: 0.85
+                })
+            }));
+            xAxis.get("renderer").labels.template.setAll({
+                fontSize: 16,
+                fontWeight: "500",
+                textAlign: "center"
+            });
+            xAxis.data.setAll(data);
+
+            var yAxis = chart.yAxes.push(am5xy.ValueAxis.new(root, {
+                min: 0,
+                max: 280,
+                numberFormat: "#",
+                renderer: Tochnyi.createYRenderer(root)
+            }));
+
+            yAxis.children.unshift(am5.Label.new(root, {
+                text: "STRIKE COUNT (JUN 2025 – MAY 2026)",
+                rotation: -90,
+                y: am5.p50,
+                centerX: am5.p50,
+                fontSize: 14,
+                fontWeight: "600",
+                fill: am5.color(0x666666)
+            }));
+
+            var series = chart.series.push(am5xy.ColumnSeries.new(root, {
+                name: "Strikes",
+                xAxis: xAxis,
+                yAxis: yAxis,
+                valueYField: "value",
+                categoryXField: "category",
+                sequencedInterpolation: true
+            }));
+
+            series.columns.template.setAll({
+                width: am5.percent(80),
+                cornerRadiusTL: 4,
+                cornerRadiusTR: 4
+            });
+
+            // Per-bar color from the data item (matches LogiMap palette)
+            series.columns.template.adapters.add("fill", function(fill, target) {
+                var c = target.dataItem && target.dataItem.dataContext.color;
+                return c != null ? am5.color(c) : fill;
+            });
+            series.columns.template.adapters.add("stroke", function(stroke, target) {
+                var c = target.dataItem && target.dataItem.dataContext.color;
+                return c != null ? am5.color(c) : stroke;
+            });
+
+            // White value labels inside bars (all colors are dark enough)
+            series.bullets.push(function(root, series, dataItem) {
+                return am5.Bullet.new(root, {
+                    locationY: 0.5,
+                    sprite: am5.Label.new(root, {
+                        text: String(dataItem.get("valueY")),
+                        centerX: am5.p50,
+                        centerY: am5.p50,
+                        fontSize: 30,
+                        fontWeight: "700",
+                        fontFamily: "Mukta",
+                        fill: am5.color(0xffffff),
+                        textAlign: "center"
+                    })
+                });
+            });
+
+            series.data.setAll(data);
+            chart.appear(1000, 100);
+        });
+    </script>
+
+</body>
+</html>
