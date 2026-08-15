@@ -19,6 +19,7 @@ The gate runs offline and verifies:
 - week folders under `charts/` match `YYYY-week-WW` (zero-padded) and contain only `.html` and `.pptx` files;
 - every published chart contains the universal contract: doctype, `lang="en"`, charset, viewport, non-empty title, Mukta font, `tochnyi.css`, and the `tochnyi-chart`/header/logo/date/title/subtitle/source/footer structure with attribution;
 - AMCharts charts additionally load the AMCharts CDN `index.js`, include the `chartdiv` container, bootstrap with `am5.ready(...)`, and reference `lib/tochnyi-charts.js`;
+- self-contained `*-share.html` files (produced by `build-share.py`) keep the narrative structure and CDN wiring but must NOT reference local `lib/` assets;
 - every local asset reference (`../../lib/...`) resolves to an existing file;
 - `reference.html` contains the four demos, the HTML template, and the `CHART METADATA` provenance block.
 

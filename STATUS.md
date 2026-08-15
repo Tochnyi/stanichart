@@ -18,7 +18,7 @@ A design-library and chart-generation repository for Tochnyi-branded data visual
 ### Chart generation workflow
 
 - `.claude/skills/tochnyi-chart.md` — the generation skill: chart-type selection, year/source prompting rules, template use, `CHART METADATA` provenance, week-folder naming, and relative-path rules.
-- Generated charts live in `charts/YYYY-week-WW/` (zero-padded week). Each week folder contains `.html` charts and, where delivered, a `.pptx` deck.
+- Generated charts live in `charts/YYYY-week-WW/` (zero-padded week). Each week folder contains `.html` charts and, where delivered, a `.pptx` deck. `build-share.py` produces self-contained `*-share.html` single-file versions that inline the CSS, helper JS, logo, and watermark.
 
 ### Verification
 

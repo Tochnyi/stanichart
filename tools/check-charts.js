@@ -4,9 +4,10 @@
 /**
  * Tochnyi Charts — repository verification lane.
  *
- * Purpose: mechanically verify that every published chart and the master
- * reference conform to the shared design-system contract, so a cold agent can
- * prove conformance without opening a browser.
+ * Purpose: mechanically verify that every published chart (both standard charts
+ * that reference `lib/` and self-contained `*-share.html` files produced by
+ * `build-share.py`) and the master reference conform to the shared design-system
+ * contract, so a cold agent can prove conformance without opening a browser.
  *
  * Owns: the structural contract checks for `charts/**` and `reference.html`.
  * Reads: all `.html` files under `charts/`, `reference.html`, and `lib/`.
@@ -83,6 +84,38 @@ const amChartsChecks = [
     ['tochnyi-charts.js helper', /tochnyi-charts\.js/],
 ];
 
+// Self-contained share files (`*-share.html`, produced by build-share.py) inline
+// the CSS, helper JS, logo, and watermark, so they must NOT reference local
+// lib/ assets and must still carry the chart's narrative structure and CDN
+// chart wiring.
+function isShareFile(name) {
+    return /-share\.html$/i.test(name);
+}
+
+const shareUniversalChecks = [
+    ['HTML doctype', /^<!DOCTYPE html>/i],
+    ['html lang="en"', /<html\s+lang="en"/i],
+    ['charset UTF-8', /charset="UTF-8"/i],
+    ['viewport meta', /name="viewport"/i],
+    ['non-empty <title>', /<title>\s*\S/i],
+    ['Mukta font', /fonts\.googleapis\.com\/css2\?family=Mukta/i],
+    ['tochnyi-chart wrapper', /class="tochnyi-chart"/],
+    ['tochnyi-title', /class="tochnyi-title"/],
+    ['tochnyi-subtitle', /class="tochnyi-subtitle"/],
+    ['tochnyi-source', /class="tochnyi-source"/],
+    ['tochnyi-footer', /class="tochnyi-footer"/],
+    ['analysis attribution', /x\.com\/delfoo/],
+];
+
+const shareAmChartsChecks = [
+    ['amCharts CDN', /cdn\.amcharts\.com/],
+    ['am5.ready bootstrap', /am5\.ready\(/],
+    ['chart container', /id="chartdiv\w*"/],
+];
+
+// A share file that still references a local lib/ asset is not self-contained.
+const SHARE_LOCAL_REF = /(?:src|href)="(?:\.{1,2}\/)*lib\/|tochnyi-(?:logo\.png|watermark\.svg|charts\.js)/;
+
 // reference.html-specific expectations beyond the universal contract.
 const referenceChecks = [
     ['lib/tochnyi.css', /href="lib\/tochnyi\.css"/],
@@ -139,12 +172,27 @@ function checkLocalAssets(filePath, src) {
     }
 }
 
-function checkHtmlFile(filePath) {
+function checkHtmlFile(filePath, share) {
     let src;
     try {
         src = fs.readFileSync(filePath, 'utf8');
     } catch (err) {
         fail(filePath, `unreadable: ${err.message}`);
+        return;
+    }
+
+    if (share) {
+        for (const name of missingChecks(src, shareUniversalChecks)) {
+            fail(filePath, `share file missing ${name}`);
+        }
+        if (/cdn\.amcharts\.com/.test(src) || /\bam5\./.test(src)) {
+            for (const name of missingChecks(src, shareAmChartsChecks)) {
+                fail(filePath, `share file missing ${name}`);
+            }
+        }
+        if (SHARE_LOCAL_REF.test(src)) {
+            fail(filePath, 'share file references a local lib/ asset instead of being self-contained');
+        }
         return;
     }
 
@@ -203,7 +251,7 @@ function main() {
                 const full = path.join(weekDir, file);
                 if (file.endsWith('.html')) {
                     chartsChecked++;
-                    checkHtmlFile(full);
+                    checkHtmlFile(full, isShareFile(file));
                 } else if (file.endsWith('.pptx')) {
                     // Generated delivery deck: allowed, contents are not validated here.
                 } else {
