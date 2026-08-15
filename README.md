@@ -22,17 +22,25 @@ Tochnyi Charts helps you create professional, publication-ready data visualizati
 
 ### Technical Requirements
 
-- No JavaScript/TypeScript compilation needed
-- No npm/node dependencies required
-- Charts work as standalone HTML files with CDN-hosted libraries
+- No JavaScript/TypeScript compilation or bundling needed
+- No runtime npm/node dependencies for charts
+- Charts are static HTML pages that load CDN-hosted libraries (AMCharts 5, Mukta font) and local `lib/` assets; opening a chart requires network access for CDN assets unless they are already cached or vendored locally
+- Node.js (any recent version) is only needed for the optional verification lane (`npm test`)
 
 ## Project Structure
 
 ```
 stanichart/
-├── README.md                          # This file
+├── README.md                          # This file (orientation)
+├── STATUS.md                          # Current capability and scope boundary
+├── TESTING.md                         # Verification procedure and lane map
+├── AGENTS.md                          # Agent execution rules
 ├── reference.html                     # Master reference with all chart examples
 ├── build-share.py                     # Build a self-contained version of any chart
+├── index.html                         # Legacy pre-design-system example (not part of the current design system)
+├── package.json                       # `npm test` runs the verification lane
+├── tools/
+│   └── check-charts.js                # Structural verification lane
 ├── lib/
 │   ├── tochnyi.css                   # Shared styles and variables
 │   ├── tochnyi-charts.js             # AMCharts helper functions
@@ -45,6 +53,16 @@ stanichart/
     └── skills/
         └── tochnyi-chart.md          # Chart generation skill for Claude Code
 ```
+
+## Verification
+
+Run the structural verification lane:
+
+```bash
+npm test
+```
+
+This checks every generated chart and `reference.html` against the shared design-system contract (structure, AMCharts wiring, resolvable local assets, week-folder naming) and fails with per-file reasons. It needs no browser and no network. See [`TESTING.md`](TESTING.md) for the full lane map and what automated checks cannot prove. Visual review and source-fidelity review remain manual lanes.
 
 ## Getting Started
 
@@ -156,8 +174,9 @@ The project follows a "single source of truth" principle:
 **To update chart styling or behavior:**
 
 1. Edit `reference.html` with your changes
-2. Test in browser to verify it works
-3. The chart skill automatically reads from `reference.html` for future charts
+2. Run `npm test` to confirm the structural contract still holds
+3. Test in browser to verify it works
+4. The chart skill automatically reads from `reference.html` for future charts
 
 **To update colors:**
 
@@ -173,7 +192,7 @@ The project follows a "single source of truth" principle:
 Charts use smart positioning:
 - **Top-left**: Big numbers (for donut charts)
 - **Top-right**: Large watermark
-- **Bottom-left**: Change badges
+- **Chart area**: Change badges (default position between bars; `corner` and `left` classes for other placements)
 - **Bottom-right**: Legend (vertical list)
 - **Footer**: Source (left) + Social links (right)
 
@@ -211,29 +230,13 @@ This makes it easy to:
 
 ## Advanced Usage
 
-### Reading Chart Metadata
+### Chart Provenance
 
-Each generated chart includes metadata in HTML comments:
-
-```html
-<!--
-CHART METADATA
-==============
-Week: 2026-week-04
-Date: 2026-01-27
-Chart Type: donut
-Topic: bankruptcy, consumer debt
-Country: Russia
-Data Period: 2025
-Source: User provided
-Key Finding: Personal bankruptcies surged 31.5% to 568,000
-Created By: Claude Sonnet 4.5
--->
-```
+Every chart generated under the current template begins with a `CHART METADATA` HTML comment recording its provenance — week, date, chart type, topic, country, data period, source, key finding, and generator. The generation skill copies this block from `reference.html` and fills every field. Charts created before the block was added to the template may lack it; the verification lane (`npm test`) reports those only as an advisory.
 
 ### Customizing Individual Charts
 
-Charts are self-contained HTML files. You can:
+Charts are static HTML files that load AMCharts 5 and the Mukta font from CDNs and shared `lib/` assets, so network access is required unless those assets are already cached or vendored locally. You can:
 - Edit the title/subtitle directly in the HTML
 - Modify data in the JavaScript section
 - Add custom CSS inline for one-off styling
@@ -297,7 +300,7 @@ CSS changes require browser refresh. For reference.html:
 When improving the library:
 
 1. Update `reference.html` first (single source of truth)
-2. Test thoroughly in browser
+2. Run `npm test` (structural lane) and review in a browser
 3. Verify the chart skill generates correct code
 4. Update this README if adding new features
 

@@ -1,0 +1,10 @@
+{
+  "name": "stanichart",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tochnyi Charts design library and chart-generation skill",
+  "scripts": {
+    "test": "node tools/check-charts.js",
+    "check:charts": "node tools/check-charts.js"
+  }
+}

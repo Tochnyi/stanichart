@@ -105,22 +105,23 @@ The chart library consists of:
    - Use the HTML template from `reference.html`
    - Adapt the JavaScript code from the relevant chart demo in `reference.html`
    - Ensure relative paths are correct for the week subfolder (use `../../lib/` instead of `lib/` or `../lib/`)
+   - **Copy the CHART METADATA comment block** from the top of the template and fill every field: `Week`, `Date`, `Chart Type`, `Topic`, `Country`, `Data Period`, `Source`, `Key Finding`, `Created By`. This is the chart's provenance record; do not skip it.
 
 ## Getting Code Examples
 
 All code examples, templates, and patterns are in `reference.html`. When generating a chart:
 
 1. **Read `reference.html`** to get the latest patterns
-2. **Extract the HTML template** from the "HTML Template" section (around line 409-474)
+2. **Extract the HTML template** from the "HTML Template" section (around lines 419-498)
 3. **Find the matching chart demo** (bar, grouped-bar, line, or pie) and adapt the JavaScript code
 4. **Check the CSS** for any special classes or patterns (change badges, big numbers, watermarks)
 
 Key sections in `reference.html`:
-- **Lines 409-474**: HTML template structure (copy this for all new charts)
-- **Lines 487-519**: Bar chart demo code
-- **Lines 522-563**: Grouped bar chart demo code
-- **Lines 566-601**: Line chart demo code
-- **Lines 604-629**: Pie/donut chart demo code
+- **Lines 419-498**: HTML template structure (copy this for all new charts; includes the CHART METADATA provenance block)
+- **Lines 510-543**: Bar chart demo code
+- **Lines 545-587**: Grouped bar chart demo code
+- **Lines 589-625**: Line chart demo code
+- **Lines 627-653**: Pie/donut chart demo code
 
 **Important differences from this skill doc:**
 - `reference.html` uses `<img>` tag for logo (simpler than styled div)
