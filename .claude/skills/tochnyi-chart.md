@@ -37,10 +37,10 @@ The chart library consists of:
    - Numbers/percentages/values
    - Categories or time periods
    - Relationships (comparisons, changes over time, distributions)
-   - **Calculate missing data points** - If you have a value and a percentage change, calculate the previous/next value to create a comparison chart:
-     - "Sales fell 30% to 326K" → Calculate: 326K ÷ (1 - 0.30) = 466K previous value → Create 2-bar chart
-     - "Revenue grew 15% to $5M" → Calculate: 5M ÷ (1 + 0.15) = $4.35M previous value → Create 2-bar chart
-     - This creates more compelling visualizations than single data points
+   - **Derive only from two stated facts** - If the source explicitly states both a value and the percentage change that produced it, you may arithmetically recover the other value for a comparison chart. This is a disclosed calculation, not invented evidence:
+     - "Sales fell 30% to 326K" → 326K ÷ (1 - 0.30) = 466K (calculated) previous value → 2-bar chart
+     - "Revenue grew 15% to $5M" → 5M ÷ (1 + 0.15) = $4.35M (calculated) previous value → 2-bar chart
+     - The percentage change must be explicit in the source. Never invent a percentage to justify a comparison, and never label a calculated value as if the source reported it. Record the calculated value as derived in the chart's `CHART METADATA` provenance (for example, `Key Finding: ... (prior value calculated from the stated 30% decline)`), and prefer a single-point chart or the stated percentage when the source supports only that.
    - **Years/dates** - If the text doesn't specify the year(s) for the data, you MUST ask the user before proceeding. Never assume or guess the year. Examples:
      - "Sales grew 15% compared to May" → Ask: "What year is this data from?"
      - "Q4 revenue was $5M" → Ask: "Which year's Q4?"
