@@ -6,7 +6,7 @@
 
 | Lane | Command | Covers |
 | --- | --- | --- |
-| Structural gate (complete automated lane) | `npm test` (or `node tools/check-charts.js`) | every generated chart and `reference.html` against the shared design-system contract |
+| Structural gate (complete automated lane) | `npm test` | every generated chart, `reference.html`, and the documentation authorities against the shared design-system contract |
 | Browser visual review | manual | `reference.html` rendering, runtime console errors, representative bar/line/grouped/donut examples |
 | Source fidelity | manual | chart claims versus the supplied input data and documented sources |
 
@@ -21,7 +21,8 @@ The gate runs offline and verifies:
 - AMCharts charts additionally load the AMCharts CDN `index.js`, include the `chartdiv` container, bootstrap with `am5.ready(...)`, and reference `lib/tochnyi-charts.js`;
 - self-contained `*-share.html` files (produced by `build-share.py`) keep the narrative structure and CDN wiring but must NOT reference local `lib/` assets;
 - every local asset reference (`../../lib/...`) resolves to an existing file;
-- `reference.html` contains the four demos, the HTML template, and the `CHART METADATA` provenance block.
+- `reference.html` contains the four demos, the HTML template, and the `CHART METADATA` provenance block;
+- the documentation authorities (`README.md`, `AGENTS.md`, `STATUS.md`, `TESTING.md`) reference files that exist, and every documented entry point is present (`tools/check-docs.js`).
 
 The gate prints one advisory line when existing charts predate the `CHART METADATA` provenance block. Advisory output does not fail the gate.
 

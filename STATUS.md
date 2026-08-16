@@ -22,7 +22,7 @@ A design-library and chart-generation repository for Tochnyi-branded data visual
 
 ### Verification
 
-- `tools/check-charts.js` — zero-dependency structural verification lane; exposed as `npm test` via `package.json`. It validates every published chart and `reference.html` against the shared contract without a browser or network.
+- `tools/check-charts.js` — zero-dependency structural verification lane for published charts and `reference.html`; `tools/check-docs.js` — documentation-integrity lane for the authority documents. Both are exposed through `npm test` via `package.json`.
 - Manual lanes: browser review of `reference.html` and generated charts for visual quality; source-fidelity review of chart claims against the supplied input data.
 
 ## Deliberately excluded (current scope boundary)

@@ -49,6 +49,7 @@ HTML files under weekly chart folders are generated/published artifacts. Keep sh
 - Do not treat screenshots as editable source when the HTML is available.
 - Keep publication-week organization and chart metadata truthful to the artifact.
 - CDN-backed charts require their external assets to be reachable unless those assets are separately vendored or cached. Do not claim stronger offline guarantees than the artifact actually has.
+- `build-share.py` produces self-contained `*-share.html` single-file charts that inline the CSS, helper JS, logo, and watermark. A share file is a delivery artifact derived from the design system; it must not become an alternate design authority, and it must not reference local `lib/` assets.
 
 ## Verification
 
@@ -58,7 +59,7 @@ The automated structural lane is:
 npm test
 ```
 
-`tools/check-charts.js` verifies every published chart and `reference.html` against the shared design-system contract (structure, AMCharts wiring, resolvable local assets, week-folder naming) and fails with per-file reasons. It runs offline and is bounded. See [`TESTING.md`](TESTING.md) for the lane map and what the gate cannot prove.
+`tools/check-charts.js` verifies every published chart and `reference.html` against the shared design-system contract (structure, AMCharts wiring, resolvable local assets, week-folder naming) and `tools/check-docs.js` verifies the documentation authorities reference real files and every documented entry point exists. Both run offline, are bounded, and fail with per-file reasons. See [`TESTING.md`](TESTING.md) for the lane map and what the gate cannot prove.
 
 For shared design changes, additionally:
 
