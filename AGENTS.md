@@ -2,7 +2,7 @@
 
 This repository follows [`../STANDARDS.md`](../STANDARDS.md). The applicable profiles are Universal and Artifact Generation. Stanichart is a design-library and chart-output repository whose current generation workflow is partly prompt/example driven, so authority boundaries must be explicit.
 
-When multiple agents may be active in this workspace, read [`../COORDINATION.md`](../COORDINATION.md) and the live [`../COORDINATION_STATUS.md`](../COORDINATION_STATUS.md) before the first consequential write. Coordination claims reserve active write scope only; they do not override Stanichart's status, verification, design-system, generation-skill, or published-chart authorities.
+When multiple agents may be active, follow [`../AGENTS.md`](../AGENTS.md), preserve unrelated working-tree state, and serialize only genuinely scarce shared external resources. Root `AGENTS.md` owns workspace coordination procedure; the project authorities below own Stanichart behavior and boundaries.
 
 ## Cold start
 
