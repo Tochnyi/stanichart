@@ -1,76 +1,29 @@
 # Agent Guide
 
-This repository follows [`../STANDARDS.md`](../STANDARDS.md). The applicable profiles are Universal and Artifact Generation. Stanichart is a design-library and chart-output repository whose current generation workflow is partly prompt/example driven, so authority boundaries must be explicit.
+This file is the execution card for Stanichart. [README.md](README.md) owns supported workflow/orientation, [STATUS.md](STATUS.md) owns current scope, [TESTING.md](TESTING.md) owns verification, `reference.html` and `lib/` own the reusable design system, and `.claude/skills/tochnyi-chart.md` owns the chart-generation procedure.
 
-When multiple agents may be active, follow [`../AGENTS.md`](../AGENTS.md), preserve unrelated working-tree state, and serialize only genuinely scarce shared external resources. Root `AGENTS.md` owns workspace coordination procedure; the project authorities below own Stanichart behavior and boundaries.
+## Start here
 
-## Cold start
+1. Read [`../AGENTS.md`](../AGENTS.md) and preserve unrelated weekly charts, source inputs, and working-tree changes.
+2. Read [README.md](README.md) and [STATUS.md](STATUS.md) before assuming a workflow or chart convention is current.
+3. Decide whether the task changes the reusable design system, generation workflow, or one published chart.
+4. For design-system work, read `reference.html`, `lib/tochnyi.css`, `lib/tochnyi-charts.js`, and focused verification before editing.
+5. For generation work, read `.claude/skills/tochnyi-chart.md` but verify constants/behavior against the actual design-system owners.
+6. Use [TESTING.md](TESTING.md) for the automated lane and required visual/source-fidelity review.
 
-1. Run `git status --short` and preserve unrelated weekly charts and input files.
-2. Read `README.md` for the supported chart workflow and directory layout, and `STATUS.md` for the current capability and scope boundary.
-3. Read `reference.html`, the relevant files under `lib/`, and `.claude/skills/tochnyi-chart.md` before changing generated-chart conventions.
-4. Determine whether the task changes the design system, the generation workflow, or one generated chart. Do not silently turn a one-off chart edit into a global rule.
-5. Validate design-system changes in a browser with representative chart types before using them as a new generation pattern.
+This project applies the Universal and Artifact Generation portfolio profiles. Do not infer a global rule from copied generated charts when `reference.html`, `lib/`, or the generation procedure has a clearer owner.
 
-If README guidance, `reference.html`, shared library code, the skill, and existing generated charts disagree, do not infer a rule from majority usage. Resolve the owning authority named below and update dependents as appropriate.
+## Project guardrails
 
-## Authority
+- Separate evidence/content, semantic chart choice, and rendering/design decisions.
+- Do not invent values, dates, units, sources, or causal claims to make a chart more complete; change the claim or chart when evidence is insufficient.
+- Shared visual behavior belongs in `reference.html`/`lib/`, not duplicated across many published chart files.
+- Generated weekly HTML and `*-share.html` files are delivery artifacts/examples, not reusable design-system authority.
+- Share builds derive from the shared design system and must not become an alternate source of visual constants or helper behavior.
+- CDN-backed charts have only the offline guarantees the artifact actually provides; do not overstate them.
+- One-off chart edits stay local to that artifact unless the task explicitly changes the reusable design contract.
+- Repository verification is local. Do not create or depend on GitHub Actions workflows.
 
-| Question | Authority |
-| --- | --- |
-| Supported workflow and repository orientation | `README.md` |
-| Current capability and scope boundary | `STATUS.md` |
-| Verification procedure and lane map | `TESTING.md` |
-| Canonical chart examples and design patterns | `reference.html` |
-| Shared visual tokens and layout styles | `lib/tochnyi.css` |
-| Shared chart helper behavior | `lib/tochnyi-charts.js` |
-| Agent generation procedure | `.claude/skills/tochnyi-chart.md` |
-| One published chart's content | That chart file under `charts/` |
+## Completion
 
-The generation skill is workflow guidance. It must not become the sole owner of visual constants, reusable JavaScript behavior, or factual chart content that has a clearer source elsewhere.
-
-Generated charts under `charts/` are deliverables and examples, not independent architecture authorities. A pattern copied into many generated files does not override `reference.html` or `lib/`.
-
-## Chart generation
-
-Agents should separate three decisions:
-
-1. **Evidence/content:** what the supplied data actually supports.
-2. **Semantic chart choice:** bar, line, donut, comparison, or another supported form.
-3. **Rendering/design:** how the shared design system expresses that choice.
-
-Do not invent missing values, sources, units, dates, or causal claims to make a chart more complete. Preserve source attribution in the chart. When data are insufficient for a proposed visual claim, change the claim or chart rather than manufacturing evidence.
-
-## Artifact boundaries
-
-HTML files under weekly chart folders are generated/published artifacts. Keep shared design behavior in `reference.html` and `lib/` when it is intended to affect future charts.
-
-- Do not edit many generated charts to establish a new global rule while leaving the design source unchanged.
-- Do not treat screenshots as editable source when the HTML is available.
-- Keep publication-week organization and chart metadata truthful to the artifact.
-- CDN-backed charts require their external assets to be reachable unless those assets are separately vendored or cached. Do not claim stronger offline guarantees than the artifact actually has.
-- `build-share.py` produces self-contained `*-share.html` single-file charts that inline the CSS, helper JS, logo, and watermark. A share file is a delivery artifact derived from the design system; it must not become an alternate design authority, and it must not reference local `lib/` assets.
-
-## Verification
-
-The automated structural lane is:
-
-```text
-npm test
-```
-
-`tools/check-charts.js` verifies every published chart and `reference.html` against the shared design-system contract (structure, AMCharts wiring, resolvable local assets, week-folder naming) and `tools/check-docs.js` verifies the documentation authorities reference real files and every documented entry point exists. Both run offline, are bounded, and fail with per-file reasons. See [`TESTING.md`](TESTING.md) for the lane map and what the gate cannot prove.
-
-For shared design changes, additionally:
-
-1. open `reference.html` in a browser;
-2. inspect the console for runtime errors;
-3. review representative bar, line, grouped, and donut examples;
-4. generate or update one bounded sample using the documented workflow;
-5. verify source paths, branding, data labels, and the `CHART METADATA` provenance block.
-
-Visual review can establish rendering quality but not factual correctness. Check chart claims against the supplied source data separately. A passing `npm test` does not imply a chart is visually correct or editorially accurate.
-
-## Complexity control
-
-This repository is the earlier prompt/example-driven generation model. Do not bolt on a partial semantic API, build system, or second renderer inside ad hoc chart files. If the project is intentionally migrated toward a constrained chart specification/renderer architecture, make that a repository-level architecture change with a single authoritative interface rather than layering it invisibly onto the existing skill.
+Run `npm test`, then the applicable visual/source-fidelity review from [TESTING.md](TESTING.md). Shared design changes require representative browser review before becoming a generation pattern. Confirm the correct documentary/code owner changed, provenance remains truthful, generated artifacts are not mistaken for reusable authority, and the diff is task-scoped.
