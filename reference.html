@@ -414,9 +414,13 @@ series.<span class="function">appear</span>(<span class="number">1000</span>, <s
         <!-- Template Section -->
         <section class="section" id="template">
             <h2 class="section-title">HTML Template</h2>
-            <p class="section-description">Copy this template to create a new chart.</p>
+            <p class="section-description">Copy this template to create a new chart. The doctype comes
+            first and the <code>CHART METADATA</code> provenance block sits directly after it &mdash;
+            <code>npm test</code> anchors on <code>^&lt;!DOCTYPE html&gt;</code>, so anything above the doctype
+            fails the gate.</p>
 
             <div class="code-block" style="font-size: 13px;">
+<span class="keyword">&lt;!DOCTYPE html&gt;</span>
 <span class="comment">&lt;!--
 CHART METADATA
 ==============
@@ -430,8 +434,6 @@ Source: [SOURCE]
 Key Finding: [ONE-LINE KEY FINDING]
 Created By: Claude (Tochnyi chart skill)
 --&gt;</span>
-
-<span class="keyword">&lt;!DOCTYPE html&gt;</span>
 &lt;html lang="en"&gt;
 
 &lt;head&gt;

@@ -105,7 +105,7 @@ The chart library consists of:
    - Use the HTML template from `reference.html`
    - Adapt the JavaScript code from the relevant chart demo in `reference.html`
    - Ensure relative paths are correct for the week subfolder (use `../../lib/` instead of `lib/` or `../lib/`)
-   - **Copy the CHART METADATA comment block** from the top of the template and fill every field: `Week`, `Date`, `Chart Type`, `Topic`, `Country`, `Data Period`, `Source`, `Key Finding`, `Created By`. This is the chart's provenance record; do not skip it.
+   - **Copy the CHART METADATA comment block** from the template, place it directly after `<!DOCTYPE html>` and before `<html lang="en">`, and fill every field: `Week`, `Date`, `Chart Type`, `Topic`, `Country`, `Data Period`, `Source`, `Key Finding`, `Created By`. This is the chart's provenance record; do not skip it.
 
 ## Getting Code Examples
 
@@ -117,7 +117,7 @@ All code examples, templates, and patterns are in `reference.html`. When generat
 4. **Check the CSS** for any special classes or patterns (change badges, big numbers, watermarks)
 
 Key sections in `reference.html`:
-- **Lines 419-498**: HTML template structure (copy this for all new charts; includes the CHART METADATA provenance block)
+- **"HTML Template" section**: HTML template structure (copy this for all new charts; includes the CHART METADATA provenance block, which follows the doctype rather than preceding it)
 - **Lines 510-543**: Bar chart demo code
 - **Lines 545-587**: Grouped bar chart demo code
 - **Lines 589-625**: Line chart demo code

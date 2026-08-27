@@ -232,7 +232,7 @@ This makes it easy to:
 
 ### Chart Provenance
 
-Every chart generated under the current template begins with a `CHART METADATA` HTML comment recording its provenance — week, date, chart type, topic, country, data period, source, key finding, and generator. The generation skill copies this block from `reference.html` and fills every field. Charts created before the block was added to the template may lack it; the verification lane (`npm test`) reports those only as an advisory.
+Every chart generated under the current template carries a `CHART METADATA` HTML comment directly after the doctype, recording its provenance — week, date, chart type, topic, country, data period, source, key finding, and generator. The generation skill copies this block from `reference.html` and fills every field. Charts created before the block was added to the template may lack it; the verification lane (`npm test`) reports those only as an advisory.
 
 ### Customizing Individual Charts
 

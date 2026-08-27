@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<!--
+CHART METADATA
+==============
+Week: 2026-week-35
+Date: 2026-08-27
+Chart Type: line
+Topic: road crashes, intercity travel, driving exposure, fuel
+Country: Russia
+Data Period: July 2022 - July 2026
+Source: GIBDD (Russian State Road Safety Inspectorate) monthly statistics, stat.gibdd.ru, indicators 498 (outside towns and settlements) and 144 (inside built-up areas)
+Key Finding: July 2026 crashes on roads between towns fell to 78.9% of their 2022-2025 July average while crashes inside towns held at 98.8%; the two measures had tracked each other every July since the indicators began in 2022. Index values calculated from published monthly counts; each series indexed to its own 2022-2025 July mean.
+Created By: Claude (Tochnyi chart skill)
+Rendering: hand-authored inline SVG, no charting library. Editorial card layout carrying
+the Tochnyi palette, Mukta type and identity marks. Single light theme, white throughout,
+so a screenshot of this page is the shareable asset. Local overrides only; lib/tochnyi.css
+is not modified.
+-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <title>Russia Intercity Travel — July 2026</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="../../lib/tochnyi.css">
+
+    <style>
+    /* ---------------------------------------------------------------------------
+       Tochnyi palette and type on an editorial card layout. Local to this artifact.
+
+       One light theme, committed to deliberately: these charts are screenshotted and
+       shared, so the page has to look the same for everyone. Every colour is stated
+       rather than inherited.
+
+       Series colours, validated against a white surface:
+         #005bbb  brand blue        - between towns, the series the chart is about
+         #cc9900  brand yellow-dark - inside towns
+
+       Brand yellow #ffd500 is not a line colour: it sits far outside the readable
+       lightness band and lands at 1.4:1 on white. It works as a large filled area,
+       which is why the bar charts can use it and this cannot.
+       --------------------------------------------------------------------------- */
+    :root {
+        color-scheme: light;
+        --surface:  #ffffff;
+        --ink:      var(--tochnyi-black);
+        --ink-2:    #454b52;
+        --muted:    var(--tochnyi-gray);
+        --hairline: rgba(2, 3, 3, .12);
+        --grid:     rgba(102, 102, 102, .26);
+        --axis:     rgba(102, 102, 102, .48);
+        --between:  var(--tochnyi-blue);
+        --intown:   var(--tochnyi-yellow-dark);
+    }
+
+    body {
+        background: var(--surface);
+        color: var(--ink);
+        padding: 44px 22px 56px;
+        -webkit-font-smoothing: antialiased;
+    }
+    .tochnyi-chart { max-width: 980px; margin: 0 auto; }
+
+    .tochnyi-header { align-items: center; }
+    .tochnyi-date { color: var(--muted); font-weight: 500; }
+
+    .tochnyi-title {
+        color: var(--ink);
+        font-size: clamp(32px, 5.2vw, 46px);
+        font-weight: 700;
+        line-height: 1.08;
+        letter-spacing: -.02em;
+        text-wrap: balance;
+        max-width: 18ch;
+        margin-bottom: 14px;
+    }
+    .tochnyi-subtitle {
+        color: var(--ink-2);
+        font-size: 20px;
+        font-weight: 400;
+        line-height: 1.5;
+        max-width: 62ch;
+    }
+    .tochnyi-highlight { color: var(--between); font-weight: 700; }
+
+    /* The card: what makes the chart read as a considered object rather than an image
+       dropped on a page. On a white ground the hairline and a soft shadow carry it. */
+    figure.card {
+        margin: 30px 0 0;
+        background: var(--surface);
+        border: 1px solid var(--hairline);
+        border-radius: 6px;
+        box-shadow: 0 1px 2px rgba(2,3,3,.05), 0 12px 32px -22px rgba(2,3,3,.5);
+        padding: 22px 22px 16px;
+        overflow-x: auto;
+    }
+    .plot-head h2 {
+        font-size: 19px; font-weight: 700; color: var(--ink);
+        margin: 0 0 2px; letter-spacing: -.005em;
+    }
+    .plot-head p { font-size: 15px; font-weight: 500; color: var(--muted); margin: 0; }
+    .legend {
+        display: flex; gap: 24px; align-items: center;
+        margin: 12px 0 4px; font-size: 16px; font-weight: 600; color: var(--ink-2);
+    }
+    .legend i {
+        display: inline-block; width: 22px; height: 4px; border-radius: 2px;
+        margin-right: 8px; vertical-align: 3px;
+    }
+
+    /* The watermark is the house mark and sits behind the plot, as it does on every
+       other Tochnyi chart. Its own file carries 5-8% opacity, so it washes rather than
+       competes; the wrapper is what gives it something to be centred in. */
+    .plot-wrap { position: relative; min-width: 640px; }
+    .plot-wrap .tochnyi-watermark { height: 86%; opacity: .9; }
+
+    svg#plot { display: block; width: 100%; height: auto; position: relative; z-index: 1; }
+    svg#plot text { font-family: var(--tochnyi-font); }
+    svg#plot .axis   { font-size: 17px; font-weight: 500; fill: var(--ink-2); }
+    svg#plot .axtitle{ font-size: 13px; font-weight: 600; fill: var(--muted); letter-spacing: .06em; }
+    svg#plot .value  { font-size: 27px; font-weight: 700; }
+    svg#plot .name   { font-size: 17px; font-weight: 600; }
+    svg#plot .sub    { font-size: 14px; font-weight: 500; fill: var(--muted); }
+    svg#plot .grid   { stroke: var(--grid); stroke-width: 1; }
+    svg#plot .baseline { stroke: var(--axis); stroke-width: 1.5; stroke-dasharray: 6 5; }
+    svg#plot .hit    { fill: transparent; cursor: crosshair; }
+
+    figcaption {
+        margin: 16px 0 0; font-size: 17px; line-height: 1.55; color: var(--ink-2);
+        max-width: 70ch;
+    }
+    figcaption b { color: var(--ink); font-weight: 700; }
+
+    .tochnyi-source {
+        color: var(--muted); font-size: 14px; line-height: 1.55;
+        margin-top: 26px; max-width: 78ch;
+    }
+    .tochnyi-footer { color: var(--ink-2); border-top: 1px solid var(--hairline); }
+    .tochnyi-footer a { color: var(--between); }
+
+    #tip {
+        position: fixed; z-index: 10000; pointer-events: none; opacity: 0;
+        transition: opacity .1s;
+        background: var(--surface); border: 1px solid var(--hairline);
+        border-left: 3px solid var(--between); border-radius: 5px;
+        padding: 10px 13px; font-family: var(--tochnyi-font);
+        font-size: 15px; line-height: 1.5; color: var(--ink);
+        box-shadow: 0 6px 22px -6px rgba(2,3,3,.3); font-variant-numeric: tabular-nums;
+    }
+    #tip b { display: block; font-weight: 700; margin-bottom: 3px; font-size: 16px; }
+    #tip .r { white-space: nowrap; font-weight: 500; color: var(--ink-2); }
+    #tip .r s { text-decoration: none; font-weight: 700; color: var(--ink); }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    </style>
+</head>
+
+<body>
+    <div class="tochnyi-chart">
+
+        <div class="tochnyi-header">
+            <img src="../../lib/tochnyi-logo.png" class="tochnyi-logo" alt="Tochnyi">
+            <div class="tochnyi-date">27 August 2026</div>
+        </div>
+
+        <h1 class="tochnyi-title">Russia Kept Commuting. It Stopped Travelling.</h1>
+
+        <p class="tochnyi-subtitle">
+            In July 2026 crashes on roads between towns fell to
+            <span class="tochnyi-highlight">21% below</span> their four-year July average, while crashes
+            inside towns barely moved. The two had tracked each other every July since the measures began.
+        </p>
+
+        <figure class="card">
+            <div class="plot-head">
+                <h2>July crashes, each half indexed</h2>
+                <p>its own 2022&ndash;2025 July average = 100</p>
+            </div>
+            <div class="legend">
+                <span><i style="background:var(--between)"></i>Between towns</span>
+                <span><i style="background:var(--intown)"></i>Inside towns</span>
+            </div>
+            <div class="plot-wrap">
+                <img src="../../lib/watermark.svg" class="tochnyi-watermark" alt="">
+                <svg id="plot" viewBox="0 0 1000 430" role="img"
+                     aria-label="July crashes between towns and inside towns, 2022 to 2026, each indexed to its own four-year July average"></svg>
+            </div>
+            <figcaption>
+                <b>The two halves moved together for four years, then came apart.</b> Every crash is
+                recorded as either inside a built-up area or outside one, and the two add up to the
+                national total exactly. In-town driving is largely the daily commute; driving between
+                towns is largely long-distance travel &mdash; the journeys cancelled first when fuel is
+                short. A crash count measures how much people drove, not why: the split shows
+                long-distance driving fell away, not what removed it.
+            </figcaption>
+        </figure>
+
+        <div class="tochnyi-source">
+            Source: GIBDD monthly road-safety statistics, stat.gibdd.ru &mdash; crashes outside towns and
+            settlements (indicator 498) against crashes inside built-up areas (indicator 144), July 2022
+            to July 2026. Each series indexed to its own 2022&ndash;2025 July average. Compiled by Tochnyi
+        </div>
+
+        <div class="tochnyi-footer">
+            <span>Analysis by:</span>
+            <a href="https://x.com/delfoo">@delfoo</a>
+            <a href="https://bsky.app/profile/delfoo.bsky.social">
+                @delfoo.bsky.social
+            </a>
+        </div>
+
+    </div>
+
+    <div id="tip"></div>
+
+    <script>
+    (function () {
+        // Index, not raw counts: crashes between towns run about a third of the in-town
+        // figure, so on a shared axis the smaller series would be a flat line along the
+        // bottom. Each is set against its own 2022-2025 July mean, so both start near 100
+        // and the gap that opens in 2026 is the whole point of the chart.
+        var DATA = [
+            { year: '2022', between: 103.0, intown:  94.3, bn: 3361, tn:  9397 },
+            { year: '2023', between: 101.9, intown: 100.1, bn: 3325, tn:  9972 },
+            { year: '2024', between:  96.9, intown: 103.2, bn: 3162, tn: 10287 },
+            { year: '2025', between:  98.1, intown: 102.4, bn: 3200, tn: 10206 },
+            { year: '2026', between:  78.9, intown:  98.8, bn: 2574, tn:  9848 }
+        ];
+        var SERIES = [
+            { key: 'between', raw: 'bn', label: 'Between towns', colour: 'var(--between)' },
+            { key: 'intown',  raw: 'tn', label: 'Inside towns',  colour: 'var(--intown)' }
+        ];
+
+        var NS = 'http://www.w3.org/2000/svg';
+        var svg = document.getElementById('plot');
+        var tip = document.getElementById('tip');
+        var nf = function (n) { return Number(n).toLocaleString('en-US'); };
+        function el(name, attrs, text) {
+            var e = document.createElementNS(NS, name);
+            for (var k in attrs) e.setAttribute(k, attrs[k]);
+            if (text != null) e.textContent = text;
+            svg.appendChild(e);
+            return e;
+        }
+
+        var W = 1000, H = 430, L = 108, R = 232, T = 26, B = 56;
+        var LO = 70, HI = 110;
+        var x = function (i) { return L + (i / (DATA.length - 1)) * (W - L - R); };
+        var y = function (v) { return T + (1 - (v - LO) / (HI - LO)) * (H - T - B); };
+
+        for (var v = LO; v <= HI; v += 10) {
+            el('line', { x1: L, x2: W - R, y1: y(v), y2: y(v), 'class': 'grid' });
+            el('text', { x: L - 14, y: y(v) + 6, 'text-anchor': 'end', 'class': 'axis' }, v);
+        }
+        // The 100 line is what both series are measured against, so it is drawn and named
+        // rather than left to be inferred from an axis tick.
+        el('line', { x1: L, x2: W - R, y1: y(100), y2: y(100), 'class': 'baseline' });
+        // The label cannot sit on the line it names: the in-town series runs straight
+        // through that band between 2024 and 2026. Park it in the clear space at the top
+        // right and drop a leader back down to the line, which is empty at that x.
+        var lblX = W - R - 4, lblY = T + 15;
+        el('line', { x1: lblX, x2: lblX, y1: lblY + 8, y2: y(100) - 3,
+            stroke: 'var(--axis)', 'stroke-width': 1, 'stroke-dasharray': '3 3' });
+        el('text', { x: lblX, y: lblY, 'text-anchor': 'end', 'class': 'axtitle' },
+            'FOUR-YEAR JULY AVERAGE');
+
+        DATA.forEach(function (d, i) {
+            el('text', { x: x(i), y: H - B + 30, 'text-anchor': 'middle', 'class': 'axis' }, d.year);
+        });
+        var mid = (T + H - B) / 2;
+        el('text', { x: 26, y: mid, 'text-anchor': 'middle', 'class': 'axtitle',
+            transform: 'rotate(-90 26 ' + mid + ')' }, 'INDEX, OWN JULY AVERAGE = 100');
+
+        SERIES.forEach(function (s) {
+            var d = DATA.map(function (row, i) {
+                return (i ? 'L' : 'M') + x(i).toFixed(1) + ' ' + y(row[s.key]).toFixed(1);
+            }).join(' ');
+            el('path', { d: d, fill: 'none', stroke: s.colour, 'stroke-width': 3.5,
+                'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+            // A 2.5px ring in the card's own surface keeps the marks legible where the
+            // lines cross, and stops a dot reading as a blob on the grid.
+            DATA.forEach(function (row, i) {
+                el('circle', { cx: x(i), cy: y(row[s.key]), r: 6, fill: s.colour,
+                    stroke: 'var(--surface)', 'stroke-width': 2.5 });
+            });
+
+            var last = DATA[DATA.length - 1], lx = x(DATA.length - 1) + 20, ly = y(last[s.key]);
+            el('text', { x: lx, y: ly - 11, 'class': 'name', fill: s.colour }, s.label);
+            el('text', { x: lx, y: ly + 15, 'class': 'value', fill: s.colour },
+                last[s.key].toFixed(1));
+            el('text', { x: lx, y: ly + 35, 'class': 'sub' }, nf(last[s.raw]) + ' crashes');
+        });
+
+        // Hover anywhere in a year's column, not just on a 6px dot.
+        function show(evt, html) {
+            tip.innerHTML = html;
+            tip.style.opacity = '1';
+            var r = tip.getBoundingClientRect();
+            var px = evt.clientX + 15, py = evt.clientY - r.height - 12;
+            if (px + r.width > window.innerWidth - 8) px = evt.clientX - r.width - 15;
+            if (px < 8) px = 8;
+            if (py < 8) py = evt.clientY + 20;
+            tip.style.left = px + 'px';
+            tip.style.top = py + 'px';
+        }
+        function hide() { tip.style.opacity = '0'; }
+        DATA.forEach(function (row, i) {
+            var w = (W - L - R) / (DATA.length - 1);
+            var hit = el('rect', { x: x(i) - w / 2, y: T - 8, width: w,
+                height: H - T - B + 8, 'class': 'hit' });
+            var html = '<b>July ' + row.year + '</b>'
+                + '<span class="r">Between towns <s>' + nf(row.bn) + '</s> &middot; index '
+                + row.between.toFixed(1) + '</span><br>'
+                + '<span class="r">Inside towns <s>' + nf(row.tn) + '</s> &middot; index '
+                + row.intown.toFixed(1) + '</span>';
+            hit.addEventListener('mousemove', function (e) { show(e, html); });
+            hit.addEventListener('mouseleave', hide);
+            hit.addEventListener('touchstart', function (e) { show(e.touches[0], html); },
+                { passive: true });
+        });
+        document.addEventListener('scroll', hide, { passive: true });
+    })();
+    </script>
+
+</body>
+</html>
