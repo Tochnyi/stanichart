@@ -86,7 +86,6 @@ This project applies the Universal and Artifact Generation portfolio profiles. D
 - Share builds derive from the shared design system and must not become an alternate source of visual constants or helper behavior.
 - CDN-backed charts have only the offline guarantees the artifact actually provides; do not overstate them.
 - One-off chart edits stay local to that artifact unless the task explicitly changes the reusable design contract.
-- Repository verification is local. Do not create or depend on GitHub Actions workflows.
 
 ## Completion
 
