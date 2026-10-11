@@ -4,7 +4,7 @@
   "private": true,
   "description": "Tochnyi Charts design library and chart-generation skill",
   "scripts": {
-    "test": "node tools/check-charts.js && node tools/check-docs.js",
+    "test": "node tools/check-charts.js && node tools/check-docs.js && python -m unittest tools/test_build_share.py",
     "check:charts": "node tools/check-charts.js",
     "check:docs": "node tools/check-docs.js"
   }

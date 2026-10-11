@@ -6,7 +6,7 @@
 
 | Lane | Command | Covers |
 | --- | --- | --- |
-| Structural gate (complete automated lane) | `npm test` | every generated chart, `reference.html`, and the documentation authorities against the shared design-system contract |
+| Structural gate (complete automated lane) | `npm test` | every generated chart, `reference.html`, and the documentation authorities against the shared design-system contract, plus the `build-share.py` unit tests |
 | Browser visual review | manual | `reference.html` rendering, runtime console errors, representative bar/line/grouped/donut examples |
 | Source fidelity | manual | chart claims versus the supplied input data and documented sources |
 
