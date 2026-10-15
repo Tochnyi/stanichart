@@ -24,7 +24,7 @@ The gate runs offline and verifies:
 - `reference.html` contains the four demos, the HTML template, and the `CHART METADATA` provenance block;
 - the documentation authorities (`README.md`, `AGENTS.md`, `STATUS.md`, `TESTING.md`) reference files that exist, and every documented entry point is present (`tools/check-docs.js`).
 
-The gate prints one advisory line when existing charts predate the `CHART METADATA` provenance block. Advisory output does not fail the gate.
+The gate prints one advisory line for metadata-less legacy-compatible charts. Advisory output does not fail the gate.
 
 ## Writing or changing a check
 

@@ -30,7 +30,7 @@ A design-library and chart-generation repository for Tochnyi-branded data visual
 - No build system, bundler, or server. Charts are static HTML that load AMCharts 5 and the Mukta font from CDNs and reference local `lib/` assets; opening a chart requires network access for CDN assets unless they are already cached or vendored locally.
 - No automated browser, rendering, or visual-diff tests. The automated lane is structural only.
 - `index.html` is a legacy pre-design-system example (inline styling, no `lib/` usage). It is retained for reference and excluded from the verification lane.
-- Older week folders and charts generated before the `CHART METADATA` template block may lack that provenance block; the verification lane reports them only as an advisory.
+- Metadata-less charts remain supported only as legacy-compatible artifacts; the verification lane reports that condition as an advisory rather than a failure.
 - No semantic `ChartSpec` schema or scripted renderer. Chart authoring is prompt/example-driven through the skill.
 
 ## Authority map

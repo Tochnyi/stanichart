@@ -272,8 +272,8 @@ function main() {
     console.log(`OK: ${chartsChecked} chart(s), reference.html, ${assetsChecked} asset reference(s) checked`);
     if (chartsMissingMetadata > 0) {
         console.warn(
-            `Advisory: ${chartsMissingMetadata} chart(s) lack the CHART METADATA provenance block ` +
-            'from the reference template; they predate the current generation contract.'
+            `Advisory: ${chartsMissingMetadata} metadata-less chart(s) are accepted only as ` +
+            'legacy-compatible artifacts under the current verification contract.'
         );
     }
 }
